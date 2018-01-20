@@ -6,6 +6,7 @@ from django.utils import timezone
 
 class vmwareGuest(models.Model):
 
+
     vmguestid = models.IntegerField(primary_key=True)
     vm_name = models.CharField(null=True, blank=True, max_length=128)
     vmhostid = models.IntegerField()
