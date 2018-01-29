@@ -1,0 +1,55 @@
+{% extends "inventoryDashboard/base.html" %}
+{% load staticfiles %}
+
+{% block page_name %}index{% endblock %}
+
+{% block content %}
+
+<div class="page-header" xmlns="http://www.w3.org/1999/html">
+    <h1><a href="{% url 'index' %}">Nordstrom Inventory Dashboard</a></h1>
+    <h4>Presented by ITR</h4>
+</div>
+
+<form method="POST" class="post-form form-inline">
+    {% csrf_token %}
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" placeholder="Search" name="search" value="{{ searchterm }}">
+            <button type="submit" class="save btn btn-default input-group-addon">Search</button>
+        </div>
+    </div>
+</form>
+<br/><br/>
+<div class="container-fluid">
+    {% for vmguest in Vmguests %}
+        <div class="panel">
+            <a href="{% url 'item_detail' vmguest.vmguestid %}">
+                <div id=clickable-row class="row">
+                    <div class="col-2">
+                        <p><b>Number:</b> {{ vmguest.vmguestid }}</p>
+                        <p><b>Project Name:</b><br />{{ vmguest.vm_name}}</p>
+                        <p><b>Status:</b><br /> {{ vmguest.state }}</p>
+                    </div>
+                    <div class="col-2">
+                        <p><b>Host:</b><br /> {{ vmguest.vmhostname }}</p>
+                        <p><b>Cluster:</b><br /> {{ vmguest.clustername }}</p>
+                    </div>
+                    <div class="col-2">
+                        <p><b>Datacenter:</b><br /> {{ vmguest.dcname }}</p>
+                        <p><b>VC Host:</b><br /> {{ vmguest.vchostname }}</p>
+                        <p><b>CPUs:</b><br /> {{ vmguest.cpu }}</p>
+                    </div>
+                    <div class="col-2>
+                        <p><b>OS:</b><br /> {{ vmguest.ostype }}</p>
+                        <p><b>Connected:</b><br> {{ vmguest.connected }}</p>
+                    </div>
+                    <div class="col-2">
+                        <p><b>Notes:</b><br /> {{ vmguest.annotation }}</p>
+                        <p><b>Timestamp:</b><br /> {{ pvmguest.timestamp }}</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock  %}

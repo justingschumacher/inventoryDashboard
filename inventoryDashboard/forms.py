@@ -1,9 +1,9 @@
 from django import forms
-from inventoryDashboard.models import vmwareGuest
+from .models import Vmguest
 
 
-class VmwareGuestForm(forms.ModelForm):
+class ProjectForm(forms.ModelForm):
 
     class Meta:
-        model = vmwareGuest
+        model = Vmguest
         fields = '__all__'

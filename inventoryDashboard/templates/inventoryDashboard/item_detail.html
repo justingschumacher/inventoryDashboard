@@ -1,0 +1,23 @@
+{% extends "inventoryDashboard/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+
+{% block page_name %}detail{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+{% csrf_token %}
+
+    <div class="page-header">
+        <h4><a href="{% url 'index' %}">Return Home</a></h4>
+        <h4>Detail Page for Item: {{object.vm_name}}.</h4>
+        {% for i in object_list %}
+            {{ i }}
+        {% endfor %}
+    </div>
+    <div class="container-fluid">
+    </div>
+
+</form>
+{% endblock %}

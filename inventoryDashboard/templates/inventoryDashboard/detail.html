@@ -1,0 +1,246 @@
+{% extends "inventoryDashboard/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+
+{% block page_name %}detail{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+{% csrf_token %}
+
+    <div class="page-header">
+        <h4><a href="{% url 'index' %}">Return Home</a></h4>
+        <h4>Detail Page for Project: {{object.name}}.</h4>
+    </div>
+    <div class="container-fluid">
+        <div class="panel">
+            <div class="row">
+                <div class="col-sm-6">
+                    <td class="col-xs-6 col-md-6">
+                        <div class="fieldWrapper">
+                            <table id="summarytable" class="table table-bordered table-sm">
+                                <thead class="
+                                    {% if project.projectStatus.lower == 'red' %}alert alert-danger
+                                    {% elif project.projectStatus.lower == 'yellow' %}alert alert-warning
+                                    {% else %}alert alert-success{% endif %}">
+                                    <tr>
+                                      <th>Summary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="form-group row">
+                                                <label for="goalType" class="col-sm-2
+                                                col-form-label">Goal Type: </label>
+                                                <div class="col-sm-10">
+                                                    {{object.goalType}}
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="goal" class="col-sm-2
+                                                col-form-label">Goal Number: </label>
+                                                <div class="col-sm-10">
+                                                    {{object.goal}}
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="owner" class="col-sm-2
+                                                col-form-label">Owner (Director): </label>
+                                                <div class="col-sm-10">
+                                                    {{object.owner}}
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="linkToMetrics" class="col-sm-2
+                                                col-form-label">Metrics Deck Link: </label>
+                                                <div class="col-sm-10">
+                                                    {{object.linkToMetrics}}
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="executiveSummary" class="col-sm-2
+                                                col-form-label">Executive Summary: </label>
+                                                <div class="col-sm-10">
+                                                    {{object.executiveSummary}}
+                                                </div>
+                                            </div>
+                                            <div class="form-group row">
+                                                <label for="pathToGreen" class="col-sm-2
+                                                col-form-label">Path to Green: </label>
+                                                <div class="col-sm-10">
+                                                    {{object.pathToGreen}}
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </div>
+                <div class="col-sm-6">
+                    <td class="col-xs-6 col-md-6">
+                        <div class="fieldWrapper">
+                            <table id="statustable" class="table table-bordered table-sm">
+                                <thead class="
+                                    {% if project.projectStatus.lower == 'red' %}alert alert-danger
+                                    {% elif project.projectStatus.lower == 'yellow' %}alert alert-warning
+                                    {% else %}alert alert-success{% endif %}">
+                                    <tr>
+                                      <th>Status   [ {{object.projectStatus}} -- {{object.projectCompletionStatus}} ]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                   <tr>
+                                       <td>
+                                           <div>
+                                               <div class="col-sm-12">
+                                                   <div class="col-sm-6">
+                                                       <div class="form-group row">
+                                                            <label for="startDate" class="col-sm-6
+                                                            col-form-label">Start Date: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.startDate}}
+                                                            </div>
+                                                       </div>
+                                                       <div class="form-group row">
+                                                            <label for="dueDate" class="col-sm-6
+                                                            col-form-label">Due Date: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.dueDate}}
+                                                            </div>
+                                                       </div>
+                                                       <div class="form-group row">
+                                                            <label for="revisedDueDate" class="col-sm-6
+                                                            col-form-label">Revised Due Date: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.revisedDueDate}}
+                                                            </div>
+                                                       </div>
+                                                       <div class="form-group row">
+                                                            <label for="completionDate" class="col-sm-6
+                                                            col-form-label">Completion Date: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.completionDate}}
+                                                            </div>
+                                                       </div>
+                                                       <div class="form-group row">
+                                                            <label for="didNotMeetDate" class="col-sm-6
+                                                            col-form-label">Did Not Meet Date: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.didNotMeetDate}}
+                                                            </div>
+                                                        </div>
+                                                   </div>
+                                                   <div class="col-sm-6">
+                                                        <div class="form-group row">
+                                                            <label for="createdDate" class="col-sm-6
+                                                            col-form-label">Created Date: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.createdDate}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label for="editDate" class="col-sm-6
+                                                            col-form-label">Last Edit Date: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.editDate}}
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label for="comments" class="col-sm-6
+                                                            col-form-label">Comments: </label>
+                                                            <div class="col-sm-6">
+                                                                {{object.comments}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                               </div>
+                                           </div>
+                                       </td>
+                                   </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="fieldWrapper">
+                        <table id="milestonestable" class="table table-bordered table-sm">
+                            <thead class="
+                                    {% if project.projectStatus.lower == 'red' %}alert alert-danger
+                                    {% elif project.projectStatus.lower == 'yellow' %}alert alert-warning
+                                    {% else %}alert alert-success{% endif %}">
+                                <tr>
+                                    <th scope="col">Milestones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="form-group row">
+                                            <label for="currentMilestone" class="col-sm-1
+                                            col-form-label">Current Milestone: </label>
+                                            <div class="col-sm-11">
+                                                {{object.currentMilestone}}
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="previousMilestone" class="col-sm-1
+                                            col-form-label">Previous Milestone: </label>
+                                            <div class="col-sm-11">
+                                                {{object.previousMilestone}}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="fieldWrapper">
+                        <table id="inputgoalstable" class="table table-bordered table-sm">
+                            <thead  class="
+                                    {% if project.projectStatus.lower == 'red' %}alert alert-danger
+                                    {% elif project.projectStatus.lower == 'yellow' %}alert alert-warning
+                                    {% else %}alert alert-success{% endif %}">
+                                <tr>
+                                    <th scope="col">Goals</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="form-group row">
+                                            <label for="inputGoals" class="col-sm-1
+                                            col-form-label">Input Goals: </label>
+                                            <div class="col-sm-11">
+                                                {{object.inputGoals}}
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="outputGoals" class="col-sm-1
+                                            col-form-label">Output Goals: </label>
+                                            <div class="col-sm-11">
+                                                {{object.outputGoals}}
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock  %}
+
