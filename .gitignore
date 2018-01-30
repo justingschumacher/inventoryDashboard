@@ -31,7 +31,4 @@ gunicorn.conf.py
 *_env/
 start_gunicorn
 gunicorn.conf.py
-inventory_data
-inventory_schema
-vmguest
-vmguest.csv
+datafiles/

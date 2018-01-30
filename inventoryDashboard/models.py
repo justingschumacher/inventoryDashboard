@@ -1,13 +1,4 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from django.db.models import Q
-
 
 
 class Vmguest(models.Model):
@@ -40,6 +31,94 @@ class Vmguest(models.Model):
         managed = False
         db_table = 'vmguest'
 
-    def oracle_count(self):
-        ora_count = Vmguest.objects.filter(Q(ostype__icontains="Ora"))
-        return ora_count
+
+class Servicenowinfo(models.Model):
+    servername = models.CharField(max_length=50, blank=True, null=True)
+    decommissioned = models.CharField(max_length=10, blank=True, null=True)
+    support_group = models.CharField(max_length=100, blank=True, null=True)
+    director = models.CharField(max_length=50, blank=True, null=True)
+    servicenowtimestamp = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'servicenowinfo'
+
+
+class Vmhost(models.Model):
+    vmhostid = models.IntegerField(primary_key=True)
+    vmhostname = models.CharField(max_length=50)
+    clid = models.IntegerField(blank=True, null=True)
+    clustername = models.CharField(max_length=50)
+    dcid = models.IntegerField(blank=True, null=True)
+    dcname = models.CharField(max_length=24)
+    vcid = models.IntegerField(blank=True, null=True)
+    vchostname = models.CharField(max_length=50)
+    fid = models.IntegerField(blank=True, null=True)
+    hardware_cpuinfo_numcpupackages = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    hardware_cpuinfo_numcpucores = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    hardware_cpupkg_description = models.CharField(max_length=60, blank=True, null=True)
+    hostsystemidentification_servicetag = models.CharField(max_length=50, blank=True, null=True)
+    hardware_systeminfo_model = models.CharField(max_length=30, blank=True, null=True)
+    hardware_systeminfo_vendor = models.CharField(max_length=30, blank=True, null=True)
+    netstackinstanceruntimeinfo_vmknickeys = models.CharField(max_length=30, blank=True, null=True)
+    memorysize = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    capability_maxregisteredvms = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    capability_maxhostrunningvms = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    capability_maxhostsupportedvcpus = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    numvms = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    htimestamp = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'vmhost'
+
+
+class Vcenter(models.Model):
+    vcid = models.IntegerField()
+    hostname = models.CharField(max_length=50, blank=True, null=True)
+    apitype = models.CharField(max_length=15, blank=True, null=True)
+    apiversion = models.CharField(max_length=8, blank=True, null=True)
+    ostype = models.CharField(max_length=30, blank=True, null=True)
+    fullname = models.CharField(max_length=60, blank=True, null=True)
+    build = models.CharField(max_length=10, blank=True, null=True)
+    vctimestamp = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'vcenter'
+
+
+class Datacenter(models.Model):
+    dcid = models.IntegerField()
+    dcname = models.CharField(max_length=24)
+    vcid = models.IntegerField(blank=True, null=True)
+    vchostname = models.CharField(max_length=50)
+    dctimestamp = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'datacenter'
+
+
+class Cluster(models.Model):
+    clid = models.IntegerField()
+    clustername = models.CharField(max_length=50)
+    dcid = models.IntegerField(blank=True, null=True)
+    dcname = models.CharField(max_length=24)
+    vcid = models.IntegerField(blank=True, null=True)
+    vchostname = models.CharField(max_length=50)
+    fid = models.IntegerField(blank=True, null=True)
+    summary_effectivecpu = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    summary_effectivememory = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    summary_numcpucores = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    summary_effectivecpucores = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    summary_numeffectivehosts = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    summary_totalcpu = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    summary_totalmemory = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    summary_usagesummary_totalvmcount = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    numhosts = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    clustertimestamp = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'cluster'

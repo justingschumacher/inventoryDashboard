@@ -6,18 +6,58 @@
 {% block page_name %}detail{% endblock %}
 
 {% block content %}
-<form action="" method="post">
+<form action="" method="get">
 {% csrf_token %}
 
     <div class="page-header">
         <h4><a href="{% url 'index' %}">Return Home</a></h4>
         <h4>Detail Page for Item: {{object.vm_name}}.</h4>
-        {% for i in object_list %}
-            {{ i }}
-        {% endfor %}
     </div>
-    <div class="container-fluid">
-    </div>
+<div class="container-fluid">
+        <div class="panel">
+            <div class="form-group">
+                <div class="container-fluid">
+                    <div id=clickable-row class="row alert alert-secondary">
+                        <div class="col-2">
+                            <p><b>VM ID:</b><br />{{ vmguest.vmguestid }}</p>
+                            <p><b>VM Name:</b><br />{{ vmguest.vm_name}}</p>
+                            <p><b>Status:</b><br /> {{ vmguest.state }}</p>
+                            <p><b>Datacenter:</b><br /> {{ vmguest.dcname }}</p>
+                            <p><b>Datacenter ID:</b><br />{{ vmguest.dcid }}</p>
+                            <p><b>Timestamp:</b><br />{{ vmguest.timestamp }}</p>
+                        </div>
+                        <div class="col-2">
+                            <p><b>Host:</b><br /> {{ vmguest.vmhostname|truncatechars:23 }}</p>
+                            <p><b>VM Host ID:</b><br />{{ vmguest.vmhostid }}</p>
+                            <p><b>VC Host:</b><br /> {{ vmguest.vchostname|truncatechars:23 }}</p>
+                            <p><b>VC Host ID:</b><br />{{ vmguest.vcid }}</p>
+                            <p><b>Cluster:</b><br /> {{ vmguest.clustername }}</p>
+                            <p><b>Cluster ID:</b><br />{{ vmguest.clid }}</p>
+                        </div>
+                        <div class="col-2">
+                            <p><b>FID:</b><br />{{ vmguest.fid }}</p>
+                            <p><b>vCPUs:</b><br /> {{ vmguest.cpu }}</p>
+                            <p><b>Overall CPU use:</b><br /> {{ vmguest.overall_cpu_use }}</p>
+                            <p><b>Memory in GB:</b><br /> {{ vmguest.mem_gb }}</p>
+                            <p><b>Overall Memory use:</b><br /> {{ vmguest.guest_memory_usage }}</p>
+                            <p><b>Disk Use in GB:</b><br />{{ vmguest.disk_gb }}</p>
+                        </div>
+                        <div class="col-2">
+                            <p><b>Annotation:</b><br />{{ vmguest.annotation }}</p>
+                            <p><b>Prefix:</b><br />{{ vmguest.prefix }}</p>
+                            <p><b>Connected:</b><br />{{ vmguest.connected }}</p>
+
+                        </div>
+                        <div class="col-2">
+                            <p><b>OS:</b><br /> {{ vmguest.ostype }}</p>
+                            <p><b>IP Address:</b><br /> {{ vmguest.ip }}</p>
+                            <p><b>VLAN:</b><br />{{ vmguest.vlan }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
 
 </form>
 {% endblock %}

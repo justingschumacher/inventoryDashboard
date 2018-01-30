@@ -1,0 +1,60 @@
+{% extends "inventoryDashboard/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+
+{% block page_name %}detail{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+{% csrf_token %}
+<div class="page-header" xmlns="http://www.w3.org/1999/html">
+    <h1><a href="{% url 'index' %}">Nordstrom Inventory Dashboard</a></h1>
+    <h4>Presented by ITR</h4>
+</div>
+<div>
+    <h4>Total VMs with more than 4 vCPU: {{ high_cpu_count }}</h4>
+</div>
+
+<br />
+<br />
+<p class="text-center font-weight-bold">Click a goal below for the details of that goal!</p>
+<div class="container-fluid">
+    {% for vmguest in high_cpu_guests %}
+        <div class="panel">
+            <div class="form-group">
+                <div class="container-fluid">
+                    <a href="{% url 'item_detail' vmguest.vmguestid %}">
+                        <div id=clickable-row class="row row-hover alert alert-secondary">
+                            <div class="col-2">
+                                <p><b>VM Name:</b><br />{{ vmguest.vm_name}}</p>
+                                <p><b>Status:</b><br /> {{ vmguest.state }}</p>
+                                <p><b>Datacenter:</b><br /> {{ vmguest.dcname }}</p>
+                            </div>
+                            <div class="col-2">
+                                <p><b>Host:</b><br /> {{ vmguest.vmhostname|truncatechars:23 }}</p>
+                                <p><b>VC Host:</b><br /> {{ vmguest.vchostname|truncatechars:23 }}</p>
+                                <p><b>Cluster:</b><br /> {{ vmguest.clustername }}</p>
+                            </div>
+                            <div class="col-2">
+                                <p><b>vCPUs:</b><br /> {{ vmguest.cpu }}</p>
+                                <p><b>Overall CPU use:</b><br /> {{ vmguest.overall_cpu_use }}</p>
+                            </div>
+                            <div class="col-2">
+                                <p><b>Memory:</b><br /> {{ vmguest.mem_gb }}</p>
+                                <p><b>Overall Memory use:</b><br /> {{ vmguest.guest_memory_usage }}</p>
+                            </div>
+                            <div class="col-2">
+                                <p><b>OS:</b><br /> {{ vmguest.ostype }}</p>
+                                <p><b>IP Address:</b><br /> {{ vmguest.ip }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+</form>
+{% endblock %}
