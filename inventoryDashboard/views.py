@@ -1,59 +1,50 @@
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.utils import timezone
 from django.views.generic import View, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render
-from .models import Vmguest
+from .models import DjangoReportCore
 
 # Create your views here.
 
 
 class IndexClassView(View):
-    model = Vmguest
+    model = DjangoReportCore
 
-    template_name = 'inventoryDashboard/index_new.html'
+    template_name = 'inventoryDashboard/index.html'
 
     success_url = reverse_lazy('index')
 
-    fields = ('vmguestid', 'vm_name', 'vmhostid', 'vmhostname', 'clid', 'clustername', 'dcid',
-              'dcname', 'vcid', 'vchostname', 'fid', 'mem_gb', 'disk_gb', 'cpu', 'overall_cpu_usage',
-              'guest_memory_usage', 'ostype', 'state', 'annotation', 'vlan', 'ip', 'prefix',
-              'connected', 'timestamp', )
+    fields = ('__all__')
 
     def get(self, request):
-        vmguests = Vmguest.objects.all()
-        vm_count = Vmguest.objects.filter(Q(vmguestid__gte=0)).count()
-        redhat_count = Vmguest.objects.filter(Q(ostype__icontains='Red Hat')).count()
-        windows_count = Vmguest.objects.filter(Q(ostype__icontains='Windows')).count()
-        ubuntu_count = Vmguest.objects.filter(Q(ostype__icontains='Ubuntu')).count()
-        suse_count = Vmguest.objects.filter(Q(ostype__icontains='SUSE')).count()
-        other_count = Vmguest.objects.filter(Q(vmguestid__gte=0)).exclude(Q(ostype__icontains='Windows') |
-                                                                          Q(ostype__icontains='Red Hat') |
-                                                                          Q(ostype__icontains='Ubuntu') |
-                                                                          Q(ostype__icontains='SUSE')
-                                                                          ).count()
-        high_cpu_count = Vmguest.objects.filter(Q(cpu__gt=4)).count()
-        high_cpu_guests = Vmguest.objects.filter(Q(cpu__gt=4))
+        vmguests = DjangoReportCore.objects.all()
+        high_cpu_count = DjangoReportCore.objects.filter(Q(cpu__gt=4)).count()
+        high_cpu_guests = DjangoReportCore.objects.filter(Q(cpu__gt=4))
+        high_memory_count = DjangoReportCore.objects.filter(Q(mem_gb__gte=8)).count()
+        high_memory_guests = DjangoReportCore.objects.filter(Q(mem_gb__gte=8))
+        guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
+        vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
 
         return render(request,
                       self.template_name,
                       {'Vmguests': vmguests,
-                       'vm_count': vm_count,
-                       'redhat_count': redhat_count,
-                       'windows_count': windows_count,
-                       'ubuntu_count': ubuntu_count,
-                       'suse_count': suse_count,
-                       'other_count': other_count,
                        'high_cpu_count': high_cpu_count,
-                       'high_cpu_guests': high_cpu_guests})
+                       'high_cpu_guests': high_cpu_guests,
+                       'high_memory_count': high_memory_count,
+                       'high_memory_guests': high_memory_guests,
+                       'guests_by_director_count': guests_by_director_count,
+                       'guests_by_support_group_count': guests_by_support_group_count,
+                       'vm_count_by_os': vm_count_by_os,
+                       })
 
     def post(self, request):
-        vmguests = Vmguest.objects.order_by('clustername')
+        vmguests = DjangoReportCore.objects.order_by('clustername')
         searchterm = ''
-        oracle_count = Vmguest.objects.filter(Q(ostype__icontains='Ora')).count()
         if request.POST and request.POST.get('search'):
             searchterm = request.POST.get('search').lower()
-            vmguests = vmguests.filter(Q(vm_name__icontains=searchterm) |
+            vmguests = vmguests.filter(Q(vmname__icontains=searchterm) |
                                        Q(vmhostname__icontains=searchterm) |
                                        Q(clustername__icontains=searchterm) |
                                        Q(dcname__icontains=searchterm) |
@@ -61,47 +52,133 @@ class IndexClassView(View):
                                        Q(cpu__icontains=searchterm) |
                                        Q(ostype__icontains=searchterm) |
                                        Q(state__icontains=searchterm) |
-                                       Q(connected__icontains=searchterm)
+                                       Q(connected__icontains=searchterm) |
+                                       Q(director__icontains=searchterm) |
+                                       Q(support_group__icontains=searchterm)
                                        )
         return render(request,
                       self.template_name,
                       {'Vmguests': vmguests,
                        'searchterm': searchterm,
-                       'oracle_count': oracle_count})
+                       })
 
 
 class DetailClassView(DetailView):
-    model = Vmguest
+    model = DjangoReportCore
 
     template_name = 'inventoryDashboard/item_detail.html'
 
     success_url = reverse_lazy('index')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['now'] = timezone.now()
-        return context
+    guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
+    guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
+
+
+class GuestsbyDirectorClassView(View):
+    model = DjangoReportCore
+
+    template_name = 'inventoryDashboard/guests_by_director.html'
+
+    success_url = reverse_lazy('index')
+
+    def get(self, request):
+        vmguests = DjangoReportCore.objects.all()
+        guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
+        vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
+
+        return render(request,
+                      self.template_name,
+                      {'Vmguests': vmguests,
+                       'guests_by_director_count': guests_by_director_count,
+                       'guests_by_support_group_count': guests_by_support_group_count,
+                       'vm_count_by_os': vm_count_by_os,
+                       })
+
+
+class GuestsbySupportGroupClassView(View):
+    model = DjangoReportCore
+
+    template_name = 'inventoryDashboard/guests_by_support_group.html'
+
+    success_url = reverse_lazy('index')
+
+    def get(self, request):
+        vmguests = DjangoReportCore.objects.all()
+        guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
+        vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
+
+        return render(request,
+                      self.template_name,
+                      {'Vmguests': vmguests,
+                       'guests_by_director_count': guests_by_director_count,
+                       'guests_by_support_group_count': guests_by_support_group_count,
+                       'vm_count_by_os': vm_count_by_os,
+                       })
+
+
+class OSDistributionClassView(View):
+    model = DjangoReportCore
+
+    template_name = 'inventoryDashboard/os_distribution.html'
+
+    success_url = reverse_lazy('index')
+
+    fields = ('__all__')
+
+    def get(self, request):
+        vmguests = DjangoReportCore.objects.all()
+        guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
+        vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
+
+        return render(request,
+                      self.template_name,
+                      {'Vmguests': vmguests,
+                       'guests_by_director_count': guests_by_director_count,
+                       'guests_by_support_group_count': guests_by_support_group_count,
+                       'vm_count_by_os': vm_count_by_os,
+                       })
 
 
 class HighCPUCountClassView(View):
-    model = Vmguest
+    model = DjangoReportCore
 
     template_name = 'inventoryDashboard/high_cpu_count.html'
 
     success_url = reverse_lazy('high_cpu_count')
 
-    fields = ('vmguestid', 'vm_name', 'vmhostid', 'vmhostname', 'clid', 'clustername', 'dcid',
-              'dcname', 'vcid', 'vchostname', 'fid', 'mem_gb', 'disk_gb', 'cpu', 'overall_cpu_usage',
-              'guest_memory_usage', 'ostype', 'state', 'annotation', 'vlan', 'ip', 'prefix',
-              'connected', 'timestamp', )
+    fields = ('__all__')
 
     def get(self, request):
-        vmguests = Vmguest.objects.all()
-        high_cpu_count = Vmguest.objects.filter(Q(cpu__gt=4)).count()
-        high_cpu_guests = Vmguest.objects.filter(Q(cpu__gt=4))
+        vmguests = DjangoReportCore.objects.all()
+        high_cpu_count = DjangoReportCore.objects.filter(Q(cpu__gt=4)).count()
+        high_cpu_guests = DjangoReportCore.objects.filter(Q(cpu__gt=4))
 
         return render(request,
                       self.template_name,
                       {'Vmguests': vmguests,
                        'high_cpu_count': high_cpu_count,
                        'high_cpu_guests': high_cpu_guests})
+
+
+class HighMemoryCountClassView(View):
+    model = DjangoReportCore
+
+    template_name = 'inventoryDashboard/high_mem_count.html'
+
+    success_url = reverse_lazy('high_mem_count')
+
+    fields = ('__all__')
+
+    def get(self, request):
+        vmguests = DjangoReportCore.objects.all()
+        high_mem_count = DjangoReportCore.objects.filter(Q(mem_gb__gt=8)).count()
+        high_mem_guests = DjangoReportCore.objects.filter(Q(mem_gb__gt=8))
+
+        return render(request,
+                      self.template_name,
+                      {'Vmguests': vmguests,
+                       'high_mem_count': high_mem_count,
+                       'high_mem_guests': high_mem_guests})

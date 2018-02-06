@@ -1,0 +1,22 @@
+{% extends "inventoryDashboard/base.html" %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+
+
+{% block page_name %}guests_by_support_group{% endblock %}
+
+{% block content %}
+<form action="" method="get">
+{% csrf_token %}
+<div class="page-header" xmlns="http://www.w3.org/1999/html">
+    <h4><a href="{% url 'index' %}">Return Home</a></h4>
+</div>
+<div>
+    <h6>VM Guests by Support Group</h6>
+</div>
+<br />
+    {% for p in guests_by_support_group_count %}
+        <p>{{ p.support_group }}: {{ p.VMs }}</p>
+    {% endfor %}
+</form>
+{% endblock %}

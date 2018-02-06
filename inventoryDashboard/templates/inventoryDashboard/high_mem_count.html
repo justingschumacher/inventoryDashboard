@@ -12,14 +12,14 @@
     <h4><a href="{% url 'index' %}">Return Home</a></h4>
 </div>
 <div>
-    <h6>Total VMs with more than 4 vCPU: {{ high_cpu_count }}</h6>
+    <h6>Total VMs with more than 8 GB Memory: {{ high_mem_count }}</h6>
 </div>
 
 <br />
 <br />
-<p class="text-center font-weight-bold">Click a goal below for the details of that goal!</p>
+<p class="text-center font-weight-bold">Click a block below for the details of that virtual machine!</p>
 <div class="container-fluid">
-    {% for vmguest in high_cpu_guests %}
+    {% for vmguest in high_mem_guests %}
         <div class="panel">
             <div class="form-group">
                 <div class="container-fluid">

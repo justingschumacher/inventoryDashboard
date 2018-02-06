@@ -1,10 +1,10 @@
 from django import forms
-from .models import Vmguest
+from .models import DjangoReportCore
 
 
 class VmguestForm(forms.ModelForm):
 
     class Meta:
-        model = Vmguest
+        model = DjangoReportCore
         fields = '__all__'
 
