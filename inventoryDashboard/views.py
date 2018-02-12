@@ -32,6 +32,8 @@ class IndexClassView(View):
                                                               ).annotate(support_group_count=Count('support_group')).count()
         director_count = DjangoReportCore.objects.values('director'
                                                          ).annotate(director_count=Count('director')).count()
+        vm_count_all = DjangoReportCore.objects.values('vmname'
+                                                       ).annotate(vm_count_all=Count('vmname')).count()
 
         qs = DjangoReportCore.objects.all()
         df = read_frame(qs, ['director', 'vmname'])
@@ -49,6 +51,7 @@ class IndexClassView(View):
                        'vm_count_by_os': vm_count_by_os,
                        'support_group_count': support_group_count,
                        'director_count': director_count,
+                       'vm_count_all': vm_count_all,
                        'df': df,
                        })
 

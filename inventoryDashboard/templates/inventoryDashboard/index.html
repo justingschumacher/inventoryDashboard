@@ -27,6 +27,7 @@
     <a href="{% url 'guestsSupportGroup' %}">Guests owned by service department</a><br />
     <a href="{% url 'osDistribution' %}">OS Distribution of VMs</a><br />
     <p>Total number of directors using on-prem resources: {{ director_count }}<br />
-    Total number of support groups using on-prem resources: {{ support_group_count }}</p>
+    Total number of support groups using on-prem resources: {{ support_group_count }}<br />
+    Total VMs across on-prem VMware resources: {{ vm_count_all }}</p>
 </div>
 {% endblock  %}
