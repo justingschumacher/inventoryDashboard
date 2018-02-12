@@ -26,6 +26,12 @@ class DjangoReportCore(models.Model):
     created = models.DateTimeField()
     modified = models.DateTimeField(blank=True, null=True)
 
+    # slug = models.SlugField(unique=True)
+
     class Meta:
         managed = False
         db_table = 'django_report_core'
+
+    # @models.permalink
+    # def get_absolute_url(self):
+    #     return 'DjangoReportCore.id', (self.slug, )

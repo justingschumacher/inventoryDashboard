@@ -1,4 +1,5 @@
 from django.db.models import Q, Count
+from django_pandas.io import read_frame
 from django.utils import timezone
 from django.views.generic import View, DetailView
 from django.urls import reverse_lazy
@@ -24,8 +25,17 @@ class IndexClassView(View):
         high_memory_count = DjangoReportCore.objects.filter(Q(mem_gb__gte=8)).count()
         high_memory_guests = DjangoReportCore.objects.filter(Q(mem_gb__gte=8))
         guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
-        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
+                                                                        ).annotate(VMs=Count('support_group'))
         vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
+        support_group_count = DjangoReportCore.objects.values('support_group'
+                                                              ).annotate(support_group_count=Count('support_group')).count()
+        director_count = DjangoReportCore.objects.values('director'
+                                                         ).annotate(director_count=Count('director')).count()
+
+        qs = DjangoReportCore.objects.all()
+        df = read_frame(qs, ['director', 'vmname'])
+
 
         return render(request,
                       self.template_name,
@@ -37,10 +47,13 @@ class IndexClassView(View):
                        'guests_by_director_count': guests_by_director_count,
                        'guests_by_support_group_count': guests_by_support_group_count,
                        'vm_count_by_os': vm_count_by_os,
+                       'support_group_count': support_group_count,
+                       'director_count': director_count,
+                       'df': df,
                        })
 
     def post(self, request):
-        vmguests = DjangoReportCore.objects.order_by('clustername')
+        vmguests = DjangoReportCore.objects.all()
         searchterm = ''
         if request.POST and request.POST.get('search'):
             searchterm = request.POST.get('search').lower()
@@ -61,6 +74,7 @@ class IndexClassView(View):
                       {'Vmguests': vmguests,
                        'searchterm': searchterm,
                        })
+
 
 
 class DetailClassView(DetailView):
