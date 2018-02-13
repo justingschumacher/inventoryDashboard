@@ -15,7 +15,7 @@
 <div>
     <h6>VM Guests by Director</h6>
 </div>
-{#<img src="{% static 'director_image' %}"/>#}
+<img src="{% static 'director_image.png' %}"/>
 <br />
     {% for p in guests_by_director_count %}
         <p>{{ p.director }}: {{ p.VMs }}</p>
