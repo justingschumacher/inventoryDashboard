@@ -1,6 +1,7 @@
 {% extends "inventoryDashboard/base.html" %}
 {% load staticfiles %}
 {% load widget_tweaks %}
+{% load static %}
 
 
 {% block page_name %}guests_by_director{% endblock %}
@@ -14,9 +15,12 @@
 <div>
     <h6>VM Guests by Director</h6>
 </div>
+<img src="{% static 'director_image' %}"/>
 <br />
     {% for p in guests_by_director_count %}
         <p>{{ p.director }}: {{ p.VMs }}</p>
     {% endfor %}
+
 </form>
+
 {% endblock %}
