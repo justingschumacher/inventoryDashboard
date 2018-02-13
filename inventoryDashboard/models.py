@@ -26,7 +26,7 @@ class DjangoReportCore(models.Model):
     created = models.DateTimeField()
     modified = models.DateTimeField(blank=True, null=True)
 
-    director_image = models.ImageField()
+    # director_image = models.ImageField()
     # slug = models.SlugField(unique=True)
 
     class Meta:
