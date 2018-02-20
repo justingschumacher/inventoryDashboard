@@ -10,4 +10,5 @@ urlpatterns = [
     path('guestsSupportGroup/', views.GuestsbySupportGroupClassView.as_view(), name='guestsSupportGroup'),
     path('osDistribution/', views.OSDistributionClassView.as_view(), name='osDistribution'),
     path('DirectorResourceSum/', views.DirectorResourceSum.as_view(), name='DirectorResourceSum'),
+    path('SupportGroupResourceSum/', views.SupportGroupResourceSum.as_view(), name='SupportGroupResourceSum'),
 ]

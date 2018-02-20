@@ -1,11 +1,10 @@
 {% extends "inventoryDashboard/base.html" %}
 {% load staticfiles %}
-{% load widget_tweaks %}
 
-
-{% block page_name %}guests_by_director{% endblock %}
+{% block page_name %}index{% endblock %}
 
 {% block content %}
+
 <div class="page-header" xmlns="http://www.w3.org/1999/html">
     <h1>Nordstrom Inventory Report Dashboard</h1>
     <h4>Presented by ITR</h4>
@@ -16,29 +15,29 @@
 <div class="page-header" xmlns="http://www.w3.org/1999/html">
     <h4><a href="{% url 'index' %}">Return Home</a></h4>
 </div>
-<div>
-    <h4>OS Distribution</h4>
-</div>
-<br />
+</form>
+    <h4> Support Group Resource Cumulative Use </h4>
+
 <div class="container-fluid">
 <table class="table table-striped">
     <thead class="thead-dark">
         <tr>
 {#            <th scope="col">ID</th>#}
-            <th scope="col">OS Type</th>
-            <th scope="col">Count</th>
+            <th scope="col">Support Group</th>
+            <th scope="col">CPU Use</th>
+            <th scope="col">Mem GB Use</th>
         </tr>
     </thead>
     <tbody>
-        {% for ostype in vm_count_by_os %}
+        {% for support_group in object_list %}
             <tr>
 {#                <th scope="row">{{ sg.id }}</th>#}
-                <td>{{ ostype.ostype }}</td>
-                <td>{{ ostype.VMs }}</td>
+                <td>{{ support_group.support_group }}</td>
+                <td>{{ support_group.total_cpu_used }}</td>
+                <td>{{ support_group.total_mem_gb_used }}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 </div>
-
 {% endblock  %}

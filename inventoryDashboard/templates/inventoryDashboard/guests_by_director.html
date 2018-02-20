@@ -17,9 +17,27 @@
 </div>
 <img src="{% static 'director_image.png' %}"/>
 <br />
-    {% for p in guests_by_director_count %}
-        <p>{{ p.director }}: {{ p.VMs }}</p>
-    {% endfor %}
+<div class="container-fluid">
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+{#            <th scope="col">ID</th>#}
+            <th scope="col">Director</th>
+            <th scope="col">Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for director in guests_by_director_count %}
+            <tr>
+{#                <th scope="row">{{ sg.id }}</th>#}
+                <td>{{ director.director }}</td>
+                <td>{{ director.VMs }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+
 </form>
 
 {% endblock %}

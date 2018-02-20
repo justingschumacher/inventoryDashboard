@@ -17,8 +17,28 @@
 <img src="{% static 'support_group.png' %}"/>
 
 <br />
-    {% for p in guests_by_support_group_count %}
-        <p>{{ p.support_group }}: {{ p.VMs }}</p>
-    {% endfor %}
+<div class="container-fluid">
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+{#            <th scope="col">ID</th>#}
+            <th scope="col">Support Group</th>
+            <th scope="col">Count</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for support_group in guests_by_support_group_count %}
+            <tr>
+{#                <th scope="row">{{ sg.id }}</th>#}
+                <td>{{ support_group.support_group }}</td>
+                <td>{{ support_group.VMs }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{#    {% for p in guests_by_support_group_count %}#}
+{#        <p>{{ p.support_group }}: {{ p.VMs }}</p>#}
+{#    {% endfor %}#}
 </form>
 {% endblock %}

@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.views.generic import View, DetailView, ListView
 from django.urls import reverse_lazy
 from django.shortcuts import render
-from .models import DjangoReportCore, DjangoReportsDirectors
+from .models import DjangoReportCore, DjangoReportsDirectors, DjangoReportsSupportGroupResources
 
 # Create your views here.
 
@@ -99,6 +99,13 @@ class DirectorResourceSum(ListView):
     director_cpu_count = DjangoReportsDirectors.objects.all()
 
 
+class SupportGroupResourceSum(ListView):
+    model = DjangoReportsDirectors
+    template_name = 'inventoryDashboard/support_group_resource_sum.html'
+    success_url = reverse_lazy('index')
+    support_group_cpu_count = DjangoReportsSupportGroupResources.objects.all()
+
+
 class DetailClassView(DetailView):
     model = DjangoReportCore
 
@@ -106,8 +113,15 @@ class DetailClassView(DetailView):
 
     success_url = reverse_lazy('index')
 
-    guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
-    guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
+    guests_by_director_count = DjangoReportCore.objects.values('director'
+                                                               ).annotate(VMs=Count('director')
+                                                                          ).order_by('VMs').reverse()
+    guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
+                                                                    ).annotate(VMs=Count('support_group')
+                                                                               ).order_by('VMs').reverse()
+    vm_count_by_os = DjangoReportCore.objects.values('ostype'
+                                                     ).annotate(VMs=Count('ostype')
+                                                                ).order_by('VMs').reverse()
 
 
 class GuestsbyDirectorClassView(View):
@@ -119,9 +133,15 @@ class GuestsbyDirectorClassView(View):
 
     def get(self, request):
         vmguests = DjangoReportCore.objects.all()
-        guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
-        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
-        vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
+        guests_by_director_count = DjangoReportCore.objects.values('director'
+                                                                   ).annotate(VMs=Count('director')
+                                                                              ).order_by('VMs').reverse()
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
+                                                                        ).annotate(VMs=Count('support_group')
+                                                                                   ).order_by('VMs').reverse()
+        vm_count_by_os = DjangoReportCore.objects.values('ostype'
+                                                         ).annotate(VMs=Count('ostype')
+                                                                    ).order_by('VMs').reverse()
 
         return render(request,
                       self.template_name,
@@ -141,9 +161,15 @@ class GuestsbySupportGroupClassView(View):
 
     def get(self, request):
         vmguests = DjangoReportCore.objects.all()
-        guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
-        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
-        vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
+        guests_by_director_count = DjangoReportCore.objects.values('director'
+                                                                   ).annotate(VMs=Count('director')
+                                                                              ).order_by('VMs').reverse()
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
+                                                                        ).annotate(VMs=Count('support_group')
+                                                                                   ).order_by('VMs').reverse()
+        vm_count_by_os = DjangoReportCore.objects.values('ostype'
+                                                         ).annotate(VMs=Count('ostype')
+                                                                    ).order_by('VMs').reverse()
 
         return render(request,
                       self.template_name,
@@ -165,9 +191,15 @@ class OSDistributionClassView(View):
 
     def get(self, request):
         vmguests = DjangoReportCore.objects.all()
-        guests_by_director_count = DjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
-        guests_by_support_group_count = DjangoReportCore.objects.values('support_group').annotate(VMs=Count('support_group'))
-        vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
+        guests_by_director_count = DjangoReportCore.objects.values('director'
+                                                                   ).annotate(VMs=Count('director')
+                                                                              ).order_by('VMs').reverse()
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
+                                                                        ).annotate(VMs=Count('support_group')
+                                                                                   ).order_by('VMs').reverse()
+        vm_count_by_os = DjangoReportCore.objects.values('ostype'
+                                                         ).annotate(VMs=Count('ostype')
+                                                                    ).order_by('VMs').reverse()
 
         return render(request,
                       self.template_name,

@@ -21,12 +21,21 @@
 </form>
 <div>
     <br />
+    <p>
     <a href="{% url 'high_cpu_count' %}">High CPU guest count (greater than 4 vCPU): {{ high_cpu_count }}</a><br />
     <a href="{% url 'high_memory_count' %}">High memory use guest count (greater than 8 GB): {{ high_memory_count }}</a><br />
+    </p>
+    <p>
     <a href="{% url 'guestsDirector' %}">Guests owned by Director</a><br />
     <a href="{% url 'DirectorResourceSum' %}">Total resources used by Director</a><br />
-    <a href="{% url 'guestsSupportGroup' %}">Guests owned by service department</a><br />
+    </p>
+    <p>
+    <a href="{% url 'guestsSupportGroup' %}">Guests owned by Support Group</a><br />
+    <a href="{% url 'SupportGroupResourceSum' %}">Total resources used by Support Group</a><br />
+    </p>
+    <p>
     <a href="{% url 'osDistribution' %}">OS Distribution of VMs</a><br />
+    </p>
     <p>Total number of directors using on-prem resources: {{ director_count }}<br />
     Total number of support groups using on-prem resources: {{ support_group_count }}<br />
     Total VMs across on-prem VMware resources: {{ vm_count_all }}</p>
