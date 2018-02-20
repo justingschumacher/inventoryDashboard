@@ -24,6 +24,7 @@
     <a href="{% url 'high_cpu_count' %}">High CPU guest count (greater than 4 vCPU): {{ high_cpu_count }}</a><br />
     <a href="{% url 'high_memory_count' %}">High memory use guest count (greater than 8 GB): {{ high_memory_count }}</a><br />
     <a href="{% url 'guestsDirector' %}">Guests owned by Director</a><br />
+    <a href="{% url 'DirectorResourceSum' %}">Total resources used by Director</a><br />
     <a href="{% url 'guestsSupportGroup' %}">Guests owned by service department</a><br />
     <a href="{% url 'osDistribution' %}">OS Distribution of VMs</a><br />
     <p>Total number of directors using on-prem resources: {{ director_count }}<br />

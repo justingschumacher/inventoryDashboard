@@ -36,3 +36,14 @@ class DjangoReportCore(models.Model):
     # @models.permalink
     # def get_absolute_url(self):
     #     return 'DjangoReportCore.id', (self.slug, )
+
+
+class DjangoReportsDirectors(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    director = models.CharField(max_length=50, blank=True, null=True)
+    total_mem_gb_used = models.BigIntegerField(blank=True, null=True)
+    total_cpu_used = models.BigIntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'django_reports_directors'

@@ -1,15 +1,18 @@
 from django.db.models import Q, Count
 from django_pandas.io import read_frame
 from django.utils import timezone
-from django.views.generic import View, DetailView
+from django.views.generic import View, DetailView, ListView
 from django.urls import reverse_lazy
 from django.shortcuts import render
-from .models import DjangoReportCore
+from .models import DjangoReportCore, DjangoReportsDirectors
 
 # Create your views here.
 
 
 class IndexClassView(View):
+
+    context_object_name: 'index'
+
     model = DjangoReportCore
 
     template_name = 'inventoryDashboard/index.html'
@@ -29,15 +32,23 @@ class IndexClassView(View):
                                                                         ).annotate(VMs=Count('support_group'))
         vm_count_by_os = DjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
         support_group_count = DjangoReportCore.objects.values('support_group'
-                                                              ).annotate(support_group_count=Count('support_group')).count()
+                                                              ).annotate(support_group_count=Count('support_group')
+                                                                         ).count()
         director_count = DjangoReportCore.objects.values('director'
                                                          ).annotate(director_count=Count('director')).count()
         vm_count_all = DjangoReportCore.objects.values('vmname'
                                                        ).annotate(vm_count_all=Count('vmname')).count()
+        director_report = DjangoReportsDirectors.objects.all()
 
         qs = DjangoReportCore.objects.all()
         df = read_frame(qs, ['director', 'vmname'])
 
+        def get_context_data(self, **kwargs):
+            context = super(IndexClassView, self).get_context_data(**kwargs)
+            context['DjangoReportCore'] = DjangoReportCore.objects.all()
+            context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
+            # And so on for more models
+            return context
 
         return render(request,
                       self.template_name,
@@ -53,6 +64,7 @@ class IndexClassView(View):
                        'director_count': director_count,
                        'vm_count_all': vm_count_all,
                        'df': df,
+                       'director_report': director_report,
                        })
 
     def post(self, request):
@@ -78,6 +90,13 @@ class IndexClassView(View):
                        'searchterm': searchterm,
                        })
 
+
+
+class DirectorResourceSum(ListView):
+    model = DjangoReportsDirectors
+    template_name = 'inventoryDashboard/director_resource_sum.html'
+    success_url = reverse_lazy('index')
+    director_cpu_count = DjangoReportsDirectors.objects.all()
 
 
 class DetailClassView(DetailView):
