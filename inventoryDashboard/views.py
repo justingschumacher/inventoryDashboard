@@ -96,14 +96,12 @@ class DirectorResourceSum(ListView):
     model = DjangoReportsDirectors
     template_name = 'inventoryDashboard/director_resource_sum.html'
     success_url = reverse_lazy('index')
-    director_cpu_count = DjangoReportsDirectors.objects.all()
 
 
 class SupportGroupResourceSum(ListView):
     model = DjangoReportsDirectors
     template_name = 'inventoryDashboard/support_group_resource_sum.html'
     success_url = reverse_lazy('index')
-    support_group_cpu_count = DjangoReportsSupportGroupResources.objects.all()
 
 
 class DetailClassView(DetailView):

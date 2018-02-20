@@ -3,22 +3,17 @@
 {% load widget_tweaks %}
 
 
-{% block page_name %}guests_by_director{% endblock %}
+{% block page_name %}os_distribution{% endblock %}
 
 {% block content %}
-<div class="page-header" xmlns="http://www.w3.org/1999/html">
-    <h1>Nordstrom Inventory Report Dashboard</h1>
-    <h4>Presented by ITR</h4>
-</div>
-
 <form action="" method="get">
     {% csrf_token %}
-<div class="page-header" xmlns="http://www.w3.org/1999/html">
-    <h4><a href="{% url 'index' %}">Return Home</a></h4>
-</div>
+</form>
+
 <div>
-    <h4>OS Distribution</h4>
+    <h6 class="text-center">OS Distribution</h6>
 </div>
+
 <br />
 <div class="container-fluid">
 <table class="table table-striped">

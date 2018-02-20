@@ -9,12 +9,9 @@
 {% block content %}
 <form action="" method="get">
 {% csrf_token %}
-<div class="page-header" xmlns="http://www.w3.org/1999/html">
-    <h4><a href="{% url 'index' %}">Return Home</a></h4>
-</div>
-<div>
-    <h6>VM Guests by Director</h6>
-</div>
+</form>
+
+<h6 class="text-center">VM Guests by Director</h6>
 <img src="{% static 'director_image.png' %}"/>
 <br />
 <div class="container-fluid">
@@ -38,6 +35,5 @@
 </table>
 </div>
 
-</form>
 
 {% endblock %}

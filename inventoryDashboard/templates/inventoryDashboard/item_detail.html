@@ -3,56 +3,54 @@
 {% load widget_tweaks %}
 
 
-{% block page_name %}detail{% endblock %}
+{% block page_name %}item_detail{% endblock %}
 
 {% block content %}
 <form action="" method="get">
 {% csrf_token %}
 
-    <div class="page-header">
-        <h4><a href="{% url 'index' %}">Return Home</a></h4>
-        <h6>Detail Page for Item: {{object.vmname}}.</h6>
-    </div>
-<div class="container-fluid">
-        <div class="panel">
-            <div class="form-group">
-                <div class="container-fluid">
-                    <div id="row" class="row alert alert-secondary">
-                        <div class="col-2">
-                            <p><b>VM Name:</b><br />{{ object.vmname}}</p>
-                            <p><b>Status:</b><br /> {{ object.state }}</p>
-                            <p><b>Datacenter:</b><br /> {{ object.dcname }}</p>
-                            <p><b>Timestamp:</b><br />{{ object.timestamp }}</p>
-                        </div>
-                        <div class="col-2">
-                            <p><b>Host:</b><br /> {{ object.vmhostname|truncatechars:23 }}</p>
-                            <p><b>VC Host:</b><br /> {{ object.vchostname|truncatechars:23 }}</p>
-                            <p><b>Cluster:</b><br /> {{ object.clustername }}</p>
-                        </div>
-                        <div class="col-2">
-                            <p><b>vCPUs:</b><br /> {{ object.cpu }}</p>
-                            <p><b>Overall CPU use:</b><br /> {{ object.overall_cpu_use }}</p>
-                            <p><b>Memory in GB:</b><br /> {{ object.mem_gb }}</p>
-                            <p><b>Overall Memory use:</b><br /> {{ object.guest_memory_usage }}</p>
-                            <p><b>Disk Use in GB:</b><br />{{ object.disk_gb }}</p>
-                        </div>
-                        <div class="col-2">
-                            <p><b>Annotation:</b><br />{{ object.annotation }}</p>
-                            <p><b>Prefix:</b><br />{{ object.prefix }}</p>
-                            <p><b>Connected:</b><br />{{ object.connected }}</p>
+<h6>Detail Page for Item: {{object.vmname}}.</h6>
 
-                        </div>
-                        <div class="col-2">
-                            <p><b>OS:</b><br /> {{ object.ostype }}</p>
-                            <p><b>IP Address:</b><br /> {{ object.ip }}</p>
-                            <p><b>VLAN:</b><br />{{ object.vlan }}</p>
-                            <p><b>Director:</b><br />{{ object.director }}</p>
-                            <p><b>Service Team:</b><br />{{ object.support_group }}</p>
-                        </div>
+<div class="container-fluid">
+    <div class="panel">
+        <div class="form-group">
+            <div class="container-fluid">
+                <div id="row" class="row alert alert-secondary">
+                    <div class="col-2">
+                        <p><b>VM Name:</b><br />{{ object.vmname}}</p>
+                        <p><b>Status:</b><br /> {{ object.state }}</p>
+                        <p><b>Datacenter:</b><br /> {{ object.dcname }}</p>
+                        <p><b>Timestamp:</b><br />{{ object.timestamp }}</p>
+                    </div>
+                    <div class="col-2">
+                        <p><b>Host:</b><br /> {{ object.vmhostname|truncatechars:23 }}</p>
+                        <p><b>VC Host:</b><br /> {{ object.vchostname|truncatechars:23 }}</p>
+                        <p><b>Cluster:</b><br /> {{ object.clustername }}</p>
+                    </div>
+                    <div class="col-2">
+                        <p><b>vCPUs:</b><br /> {{ object.cpu }}</p>
+                        <p><b>Overall CPU use:</b><br /> {{ object.overall_cpu_use }}</p>
+                        <p><b>Memory in GB:</b><br /> {{ object.mem_gb }}</p>
+                        <p><b>Overall Memory use:</b><br /> {{ object.guest_memory_usage }}</p>
+                        <p><b>Disk Use in GB:</b><br />{{ object.disk_gb }}</p>
+                    </div>
+                    <div class="col-2">
+                        <p><b>Annotation:</b><br />{{ object.annotation }}</p>
+                        <p><b>Prefix:</b><br />{{ object.prefix }}</p>
+                        <p><b>Connected:</b><br />{{ object.connected }}</p>
+
+                    </div>
+                    <div class="col-2">
+                        <p><b>OS:</b><br /> {{ object.ostype }}</p>
+                        <p><b>IP Address:</b><br /> {{ object.ip }}</p>
+                        <p><b>VLAN:</b><br />{{ object.vlan }}</p>
+                        <p><b>Director:</b><br />{{ object.director }}</p>
+                        <p><b>Service Team:</b><br />{{ object.support_group }}</p>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </div>
 </form>
 {% endblock %}

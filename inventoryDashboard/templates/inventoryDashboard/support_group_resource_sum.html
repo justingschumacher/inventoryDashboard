@@ -1,22 +1,14 @@
 {% extends "inventoryDashboard/base.html" %}
 {% load staticfiles %}
 
-{% block page_name %}index{% endblock %}
+{% block page_name %}support_group_resource_sum{% endblock %}
 
 {% block content %}
 
-<div class="page-header" xmlns="http://www.w3.org/1999/html">
-    <h1>Nordstrom Inventory Report Dashboard</h1>
-    <h4>Presented by ITR</h4>
-</div>
-
 <form action="" method="get">
     {% csrf_token %}
-<div class="page-header" xmlns="http://www.w3.org/1999/html">
-    <h4><a href="{% url 'index' %}">Return Home</a></h4>
-</div>
 </form>
-    <h4> Support Group Resource Cumulative Use </h4>
+<h6 class="text-center"> Support Group Resource Cumulative Use </h6>
 
 <div class="container-fluid">
 <table class="table table-striped">
