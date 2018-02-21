@@ -99,9 +99,10 @@ class DirectorResourceSum(ListView):
 
 
 class SupportGroupResourceSum(ListView):
-    model = DjangoReportsDirectors
+    model = DjangoReportsSupportGroupResources
     template_name = 'inventoryDashboard/support_group_resource_sum.html'
     success_url = reverse_lazy('index')
+
 
 
 class DetailClassView(DetailView):
