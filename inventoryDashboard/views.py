@@ -134,6 +134,23 @@ class GuestsbyDirectorClassView(View):
     template_name = 'inventoryDashboard/guests_by_director.html'
     success_url = reverse_lazy('index')
 
+    def getsbs(request):
+        guests_by_director_count = DjangoReportCore.objects.values('director'
+                                                                   ).annotate(VMs=Count('director')
+                                                                              ).order_by('VMs').reverse().order_by('VMs')[:20]
+        queryset = guests_by_director_count
+        df = read_frame(queryset)
+
+        graph = sb.barplot(data=df, y='VMs', x='director', palette='gray')
+        graph.set_ylabel('Virtual Machine Count')
+        graph.set_xlabel('Director')
+        graph.set_xticklabels(graph.get_xticklabels(), rotation=90)
+        graph.set_title('Virtual Machine Count by Director')
+        graph.figure.set_size_inches(11, 8)
+        response = HttpResponse(content_type="image/jpeg")
+        graph.figure.savefig(response, format="png")
+        return response
+
     def get(self, request):
         guests_by_director_count = DjangoReportCore.objects.values('director'
                                                                    ).annotate(VMs=Count('director')
