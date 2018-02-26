@@ -11,9 +11,13 @@
 </form>
 
 <h6 class="text-center">VM Guests by Support Group</h6>
-<img src="{% static 'support_group.png' %}"/>
+
+{#<img src="{% static 'support_group.png' %}"/>#}
+<img src="{% url 'guestsSupportGroupSBS' %}" />
+<br />
 
 <br />
+<p></p>
 <div class="container-fluid">
 <table class="table table-striped">
     <thead class="thead-dark">

@@ -1,9 +1,19 @@
 from django.db.models import Q, Count
 from django_pandas.io import read_frame
+import numpy as np
+import pandas as pd
+from scipy import stats, integrate
+import matplotlib as pl
+pl.use('Agg')
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+rcParams.update({'figure.autolayout': True})
+import seaborn as sb
 from django.utils import timezone
-from django.views.generic import View, DetailView, ListView
+from django.views.generic import View, DetailView, ListView, TemplateView
 from django.urls import reverse_lazy
 from django.shortcuts import render
+from django.http import HttpResponse
 from .models import DjangoReportCore, DjangoReportsDirectors, DjangoReportsSupportGroupResources
 
 # Create your views here.
@@ -104,14 +114,10 @@ class SupportGroupResourceSum(ListView):
     success_url = reverse_lazy('index')
 
 
-
 class DetailClassView(DetailView):
     model = DjangoReportCore
-
     template_name = 'inventoryDashboard/item_detail.html'
-
     success_url = reverse_lazy('index')
-
     guests_by_director_count = DjangoReportCore.objects.values('director'
                                                                ).annotate(VMs=Count('director')
                                                                           ).order_by('VMs').reverse()
@@ -125,67 +131,58 @@ class DetailClassView(DetailView):
 
 class GuestsbyDirectorClassView(View):
     model = DjangoReportCore
-
     template_name = 'inventoryDashboard/guests_by_director.html'
-
     success_url = reverse_lazy('index')
 
     def get(self, request):
-        vmguests = DjangoReportCore.objects.all()
         guests_by_director_count = DjangoReportCore.objects.values('director'
                                                                    ).annotate(VMs=Count('director')
                                                                               ).order_by('VMs').reverse()
-        guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
-                                                                        ).annotate(VMs=Count('support_group')
-                                                                                   ).order_by('VMs').reverse()
-        vm_count_by_os = DjangoReportCore.objects.values('ostype'
-                                                         ).annotate(VMs=Count('ostype')
-                                                                    ).order_by('VMs').reverse()
-
         return render(request,
                       self.template_name,
-                      {'Vmguests': vmguests,
-                       'guests_by_director_count': guests_by_director_count,
-                       'guests_by_support_group_count': guests_by_support_group_count,
-                       'vm_count_by_os': vm_count_by_os,
+                      {'guests_by_director_count': guests_by_director_count,
                        })
 
 
 class GuestsbySupportGroupClassView(View):
     model = DjangoReportCore
-
     template_name = 'inventoryDashboard/guests_by_support_group.html'
-
     success_url = reverse_lazy('index')
 
-    def get(self, request):
-        vmguests = DjangoReportCore.objects.all()
-        guests_by_director_count = DjangoReportCore.objects.values('director'
-                                                                   ).annotate(VMs=Count('director')
-                                                                              ).order_by('VMs').reverse()
+    def getsbs(request):
         guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
                                                                         ).annotate(VMs=Count('support_group')
-                                                                                   ).order_by('VMs').reverse()
-        vm_count_by_os = DjangoReportCore.objects.values('ostype'
-                                                         ).annotate(VMs=Count('ostype')
-                                                                    ).order_by('VMs').reverse()
+                                                                                   ).order_by('VMs').reverse().order_by('VMs')[:20]
+        queryset = guests_by_support_group_count
+        df = read_frame(queryset)
+
+        graph = sb.barplot(data=df, y='VMs', x='support_group', palette='gray')
+        graph.set_ylabel('Virtual Machine Count')
+        graph.set_xlabel('Service Team')
+        graph.set_xticklabels(graph.get_xticklabels(), rotation=90)
+        graph.set_title('Virtual Machine Count by Support Group')
+        graph.figure.set_size_inches(11, 8)
+        response = HttpResponse(content_type="image/jpeg")
+        graph.figure.savefig(response, format="png")
+        return response
+
+    def get(self, request):
+        guests_by_support_group_count = DjangoReportCore.objects.values('support_group'
+                                                                        ).annotate(VMs=Count('support_group')
+                                                                              ).order_by('VMs').reverse()
+        df = read_frame(guests_by_support_group_count)
 
         return render(request,
                       self.template_name,
-                      {'Vmguests': vmguests,
-                       'guests_by_director_count': guests_by_director_count,
-                       'guests_by_support_group_count': guests_by_support_group_count,
-                       'vm_count_by_os': vm_count_by_os,
+                      {'guests_by_support_group_count': guests_by_support_group_count,
+                       'df': df,
                        })
 
 
 class OSDistributionClassView(View):
     model = DjangoReportCore
-
     template_name = 'inventoryDashboard/os_distribution.html'
-
     success_url = reverse_lazy('index')
-
     fields = ('__all__')
 
     def get(self, request):
@@ -211,11 +208,8 @@ class OSDistributionClassView(View):
 
 class HighCPUCountClassView(View):
     model = DjangoReportCore
-
     template_name = 'inventoryDashboard/high_cpu_count.html'
-
     success_url = reverse_lazy('high_cpu_count')
-
     fields = ('__all__')
 
     def get(self, request):
@@ -232,11 +226,8 @@ class HighCPUCountClassView(View):
 
 class HighMemoryCountClassView(View):
     model = DjangoReportCore
-
     template_name = 'inventoryDashboard/high_mem_count.html'
-
     success_url = reverse_lazy('high_mem_count')
-
     fields = ('__all__')
 
     def get(self, request):
