@@ -16,7 +16,7 @@
 
 <br />
 <br />
-<p class="text-center font-weight-bold">Click a goal below for the details of that goal!</p>
+<p class="text-center font-weight-bold">Click a block below for the details of that goal!</p>
 <div class="container-fluid">
     {% for vmguest in high_cpu_guests %}
         <div class="panel">
@@ -25,7 +25,7 @@
                     <a href="{% url 'item_detail' vmguest.id %}">
                         <div id=clickable-row class="row row-hover alert alert-secondary">
                             <div class="col-2">
-                                <p><b>VM Name:</b><br />{{ vmguest.vmname}}</p>
+                                <p><b>VM Name:</b><br />{{ vmguest.vm_name}}</p>
                                 <p><b>Status:</b><br /> {{ vmguest.state }}</p>
                                 <p><b>Datacenter:</b><br /> {{ vmguest.dcname }}</p>
                             </div>
