@@ -77,7 +77,7 @@ class VwDjangoReportComplete(models.Model):
     state = models.CharField(max_length=50, blank=True, null=True)
     annotation = models.CharField(max_length=1024, blank=True, null=True)
     vlan = models.CharField(max_length=512, blank=True, null=True)
-    ip = models.CharField(max_length=50, blank=True, null=True)
+    ip = models.CharField(max_length=255, blank=True, null=True)
     prefix = models.IntegerField(blank=True, null=True)
     connected = models.CharField(max_length=50, blank=True, null=True)
     timestamp = models.DateTimeField(blank=True, null=True)
