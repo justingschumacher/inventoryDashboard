@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 import seaborn as sb
+import ggplot
 from django.utils import timezone
 from django.views.generic import View, DetailView, ListView, TemplateView
 from django.urls import reverse_lazy
@@ -149,6 +150,17 @@ class GuestsbyDirectorClassView(View):
         graph.figure.set_size_inches(11, 8)
         response = HttpResponse(content_type="image/jpeg")
         graph.figure.savefig(response, format="png")
+        return response
+
+    def getggplot(request):
+        guests_by_director_count = VwDjangoReportComplete.objects.values('director'
+                                                                   ).annotate(VMs=Count('director')
+                                                                              ).order_by('VMs').reverse().order_by('VMs')[:20]
+        queryset = guests_by_director_count
+        df = read_frame(queryset)
+
+        g = ggplot(df, aes(x='director', y='VMs'))
+        response = HttpResponse(content_type="image/jpeg")
         return response
 
     def get(self, request):
