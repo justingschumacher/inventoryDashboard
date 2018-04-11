@@ -15,8 +15,10 @@
 </div>
 
 <br />
+{#<img src="{% url 'high_cpu_countSBS' %}" />#}
+{{ cpu_utilization_boxplot }}
 <br />
-<p class="text-center font-weight-bold">Click a block below for the details of that goal!</p>
+<p class="text-center font-weight-bold">Click a block below for the details of that item!</p>
 <div class="container-fluid">
     {% for vmguest in high_cpu_guests %}
         <div class="panel">

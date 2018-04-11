@@ -137,3 +137,31 @@ class VwDjangoReportComplete(models.Model):
     class Meta:
         managed = False
         db_table = 'vw_django_report_complete'
+
+class DjangoReportCoreDim(models.Model):
+    id = models.IntegerField(primary_key=True)
+    vmname = models.CharField(max_length=50)
+    vmhostname = models.CharField(max_length=50)
+    clustername = models.CharField(max_length=50)
+    dcname = models.CharField(max_length=24)
+    vchostname = models.CharField(max_length=50)
+    support_group = models.CharField(max_length=100, blank=True, null=True)
+    director = models.CharField(max_length=50, blank=True, null=True)
+    decommissioned = models.CharField(max_length=10, blank=True, null=True)
+    mem_gb = models.DecimalField(max_digits=65535, decimal_places=65535)
+    disk_gb = models.DecimalField(max_digits=65535, decimal_places=65535)
+    cpu = models.IntegerField()
+    overall_cpu_usage = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    guest_memory_usage = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    ostype = models.CharField(max_length=128)
+    state = models.CharField(max_length=50)
+    annotation = models.CharField(max_length=1024)
+    vlan = models.CharField(max_length=512)
+    ip = models.CharField(max_length=255)
+    prefix = models.IntegerField()
+    connected = models.CharField(max_length=50)
+    created = models.DateTimeField()
+
+    class Meta:
+        managed = False
+        db_table = 'django_report_core'

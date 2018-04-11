@@ -1,4 +1,4 @@
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Avg
 from django_pandas.io import read_frame
 import numpy as np
 import pandas as pd
@@ -9,13 +9,12 @@ import matplotlib.pyplot as plt
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 import seaborn as sb
-import ggplot
 from django.utils import timezone
 from django.views.generic import View, DetailView, ListView, TemplateView
 from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import DjangoReportCore, DjangoReportsDirectors, DjangoReportsSupportGroupResources,VwDjangoReportComplete
+from .models import DjangoReportCore, DjangoReportsDirectors, DjangoReportsSupportGroupResources, DjangoReportCoreDim
 
 # Create your views here.
 
@@ -24,7 +23,7 @@ class IndexClassView(View):
 
     context_object_name: 'index'
 
-    model = VwDjangoReportComplete
+    model = DjangoReportCoreDim
 
     template_name = 'inventoryDashboard/index.html'
 
@@ -33,30 +32,30 @@ class IndexClassView(View):
     fields = ('__all__')
 
     def get(self, request):
-        vmguests = VwDjangoReportComplete.objects.all()
-        high_cpu_count = VwDjangoReportComplete.objects.filter(Q(cpu__gt=4)).count()
-        high_cpu_guests = VwDjangoReportComplete.objects.filter(Q(cpu__gt=4))
-        high_memory_count = VwDjangoReportComplete.objects.filter(Q(mem_gb__gte=8)).count()
-        high_memory_guests = VwDjangoReportComplete.objects.filter(Q(mem_gb__gte=8))
-        guests_by_director_count = VwDjangoReportComplete.objects.values('director').annotate(VMs=Count('director'))
-        guests_by_support_group_count = VwDjangoReportComplete.objects.values('support_group'
+        vmguests = DjangoReportCoreDim.objects.all()
+        high_cpu_count = DjangoReportCoreDim.objects.filter(Q(cpu__gt=4)).count()
+        high_cpu_guests = DjangoReportCoreDim.objects.filter(Q(cpu__gt=4))
+        high_memory_count = DjangoReportCoreDim.objects.filter(Q(mem_gb__gte=8)).count()
+        high_memory_guests = DjangoReportCoreDim.objects.filter(Q(mem_gb__gte=8))
+        guests_by_director_count = DjangoReportCoreDim.objects.values('director').annotate(VMs=Count('director'))
+        guests_by_support_group_count = DjangoReportCoreDim.objects.values('support_group'
                                                                         ).annotate(VMs=Count('support_group'))
-        vm_count_by_os = VwDjangoReportComplete.objects.values('ostype').annotate(VMs=Count('ostype'))
-        support_group_count = VwDjangoReportComplete.objects.values('support_group'
+        vm_count_by_os = DjangoReportCoreDim.objects.values('ostype').annotate(VMs=Count('ostype'))
+        support_group_count = DjangoReportCoreDim.objects.values('support_group'
                                                               ).annotate(support_group_count=Count('support_group')
                                                                          ).count()
-        director_count = VwDjangoReportComplete.objects.values('director'
+        director_count = DjangoReportCoreDim.objects.values('director'
                                                          ).annotate(director_count=Count('director')).count()
-        vm_count_all = VwDjangoReportComplete.objects.values('vm_name'
-                                                       ).annotate(vm_count_all=Count('vm_name')).count()
+        vm_count_all = DjangoReportCoreDim.objects.values('vmname'
+                                                       ).annotate(vm_count_all=Count('vmname')).count()
         director_report = DjangoReportsDirectors.objects.all()
 
-        qs = VwDjangoReportComplete.objects.all()
-        df = read_frame(qs, ['director', 'vm_name'])
+        qs = DjangoReportCoreDim.objects.all()
+        df = read_frame(qs, ['director', 'vmname'])
 
         def get_context_data(self, **kwargs):
             context = super(IndexClassView, self).get_context_data(**kwargs)
-            context['DjangoReportCore'] = VwDjangoReportComplete.objects.all()
+            context['DjangoReportCore'] = DjangoReportCoreDim.objects.all()
             context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
             # And so on for more models
             return context
@@ -79,7 +78,7 @@ class IndexClassView(View):
                        })
 
     def post(self, request):
-        vmguests = VwDjangoReportComplete.objects.all()
+        vmguests = DjangoReportCoreDim.objects.all()
         searchterm = ''
         if request.POST and request.POST.get('search'):
             searchterm = request.POST.get('search').lower()
@@ -116,27 +115,27 @@ class SupportGroupResourceSum(ListView):
 
 
 class DetailClassView(DetailView):
-    model = VwDjangoReportComplete
+    model = DjangoReportCoreDim
     template_name = 'inventoryDashboard/item_detail.html'
     success_url = reverse_lazy('index')
-    guests_by_director_count = VwDjangoReportComplete.objects.values('director'
+    guests_by_director_count = DjangoReportCoreDim.objects.values('director'
                                                                ).annotate(VMs=Count('director')
                                                                           ).order_by('VMs').reverse()
-    guests_by_support_group_count = VwDjangoReportComplete.objects.values('support_group'
+    guests_by_support_group_count = DjangoReportCoreDim.objects.values('support_group'
                                                                     ).annotate(VMs=Count('support_group')
                                                                                ).order_by('VMs').reverse()
-    vm_count_by_os = VwDjangoReportComplete.objects.values('ostype'
+    vm_count_by_os = DjangoReportCoreDim.objects.values('ostype'
                                                      ).annotate(VMs=Count('ostype')
                                                                 ).order_by('VMs').reverse()
 
 
 class GuestsbyDirectorClassView(View):
-    model = VwDjangoReportComplete
+    model = DjangoReportCoreDim
     template_name = 'inventoryDashboard/guests_by_director.html'
     success_url = reverse_lazy('index')
 
     def getsbs(request):
-        guests_by_director_count = VwDjangoReportComplete.objects.values('director'
+        guests_by_director_count = DjangoReportCoreDim.objects.values('director'
                                                                    ).annotate(VMs=Count('director')
                                                                               ).order_by('VMs').reverse().order_by('VMs')[:20]
         queryset = guests_by_director_count
@@ -152,19 +151,8 @@ class GuestsbyDirectorClassView(View):
         graph.figure.savefig(response, format="png")
         return response
 
-    def getggplot(request):
-        guests_by_director_count = VwDjangoReportComplete.objects.values('director'
-                                                                   ).annotate(VMs=Count('director')
-                                                                              ).order_by('VMs').reverse().order_by('VMs')[:20]
-        queryset = guests_by_director_count
-        df = read_frame(queryset)
-
-        g = ggplot(df, aes(x='director', y='VMs'))
-        response = HttpResponse(content_type="image/jpeg")
-        return response
-
     def get(self, request):
-        guests_by_director_count = VwDjangoReportComplete.objects.values('director'
+        guests_by_director_count = DjangoReportCoreDim.objects.values('director'
                                                                    ).annotate(VMs=Count('director')
                                                                               ).order_by('VMs').reverse()
         return render(request,
@@ -174,12 +162,12 @@ class GuestsbyDirectorClassView(View):
 
 
 class GuestsbySupportGroupClassView(View):
-    model = VwDjangoReportComplete
+    model = DjangoReportCoreDim
     template_name = 'inventoryDashboard/guests_by_support_group.html'
     success_url = reverse_lazy('index')
 
     def getsbs(request):
-        guests_by_support_group_count = VwDjangoReportComplete.objects.values('support_group'
+        guests_by_support_group_count = DjangoReportCoreDim.objects.values('support_group'
                                                                         ).annotate(VMs=Count('support_group')
                                                                                    ).order_by('VMs').reverse().order_by('VMs')[:20]
         queryset = guests_by_support_group_count
@@ -196,7 +184,7 @@ class GuestsbySupportGroupClassView(View):
         return response
 
     def get(self, request):
-        guests_by_support_group_count = VwDjangoReportComplete.objects.values('support_group'
+        guests_by_support_group_count = DjangoReportCoreDim.objects.values('support_group'
                                                                         ).annotate(VMs=Count('support_group')
                                                                               ).order_by('VMs').reverse()
         df = read_frame(guests_by_support_group_count)
@@ -209,20 +197,20 @@ class GuestsbySupportGroupClassView(View):
 
 
 class OSDistributionClassView(View):
-    model = VwDjangoReportComplete
+    model = DjangoReportCoreDim
     template_name = 'inventoryDashboard/os_distribution.html'
     success_url = reverse_lazy('index')
     fields = ('__all__')
 
     def get(self, request):
-        vmguests = VwDjangoReportComplete.objects.all()
-        guests_by_director_count = VwDjangoReportComplete.objects.values('director'
+        vmguests = DjangoReportCoreDim.objects.all()
+        guests_by_director_count = DjangoReportCoreDim.objects.values('director'
                                                                    ).annotate(VMs=Count('director')
                                                                               ).order_by('VMs').reverse()
-        guests_by_support_group_count = VwDjangoReportComplete.objects.values('support_group'
+        guests_by_support_group_count = DjangoReportCoreDim.objects.values('support_group'
                                                                         ).annotate(VMs=Count('support_group')
                                                                                    ).order_by('VMs').reverse()
-        vm_count_by_os = VwDjangoReportComplete.objects.values('ostype'
+        vm_count_by_os = DjangoReportCoreDim.objects.values('ostype'
                                                          ).annotate(VMs=Count('ostype')
                                                                     ).order_by('VMs').reverse()
 
@@ -236,33 +224,57 @@ class OSDistributionClassView(View):
 
 
 class HighCPUCountClassView(View):
-    model = VwDjangoReportComplete
+    model = DjangoReportCoreDim
     template_name = 'inventoryDashboard/high_cpu_count.html'
     success_url = reverse_lazy('high_cpu_count')
     fields = ('__all__')
 
+    def getsbs(request):
+        cpu_utilization_boxplot = DjangoReportCoreDim.objects.values('cpu'
+                                                                   ).annotate(count=Count('overall_cpu_usage')
+                                                                              ).aggregate(avg=Avg('count'))
+        # df = pd.DataFrame.from_dict(cpu_utilization_boxplot)
+        # df = read_frame(cpu_utilization_boxplot)
+
+
+        graph = sb.boxplot(data=df, y='cpu', x='overall_cpu_usage', palette='gray')
+        graph.set_ylabel('vCPU count')
+        graph.set_xlabel('Hertz Used')
+        graph.set_xticklabels(graph.get_xticklabels(), rotation=90)
+        graph.set_title('CPU utilization by number of vCPUs')
+        graph.figure.set_size_inches(11, 8)
+        response = HttpResponse(content_type="image/jpeg")
+        graph.figure.savefig(response, format="png")
+        return response
+
     def get(self, request):
-        vmguests = VwDjangoReportComplete.objects.all()
-        high_cpu_count = VwDjangoReportComplete.objects.filter(Q(cpu__gt=4)).count()
-        high_cpu_guests = VwDjangoReportComplete.objects.filter(Q(cpu__gt=4))
+        vmguests = DjangoReportCoreDim.objects.all()
+        high_cpu_count = DjangoReportCoreDim.objects.filter(Q(cpu__gt=4)).count()
+        high_cpu_guests = DjangoReportCoreDim.objects.filter(Q(cpu__gt=4))
+        cpu_utilization_boxplot = DjangoReportCoreDim.objects.values('cpu'
+                                                                     ).annotate(count=Count('overall_cpu_usage')
+                                                                                ).aggregate(avg=Avg('count'))
 
         return render(request,
                       self.template_name,
                       {'Vmguests': vmguests,
                        'high_cpu_count': high_cpu_count,
-                       'high_cpu_guests': high_cpu_guests})
+                       'high_cpu_guests': high_cpu_guests,
+                       'cpu_utilization_boxplot': cpu_utilization_boxplot,
+                       }
+                      )
 
 
 class HighMemoryCountClassView(View):
-    model = VwDjangoReportComplete
+    model = DjangoReportCoreDim
     template_name = 'inventoryDashboard/high_mem_count.html'
     success_url = reverse_lazy('high_mem_count')
     fields = ('__all__')
 
     def get(self, request):
-        vmguests = VwDjangoReportComplete.objects.all()
-        high_mem_count = VwDjangoReportComplete.objects.filter(Q(mem_gb__gt=8)).count()
-        high_mem_guests = VwDjangoReportComplete.objects.filter(Q(mem_gb__gt=8))
+        vmguests = DjangoReportCoreDim.objects.all()
+        high_mem_count = DjangoReportCoreDim.objects.filter(Q(mem_gb__gt=8)).count()
+        high_mem_guests = DjangoReportCoreDim.objects.filter(Q(mem_gb__gt=8))
 
         return render(request,
                       self.template_name,
