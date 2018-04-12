@@ -35,11 +35,11 @@
                             </div>
                             <div class="col-2">
                                 <p><b>vCPUs:</b><br /> {{ vmguest.cpu }}</p>
-                                <p><b>Fraction of CPU Used:</b><br /> {{ vmguest.fraction_cpu_usage }}</p>
+                                <p><b>Fraction of CPU Used:</b><br /> {{ vmguest.overall_cpu_usage }}</p>
                             </div>
                             <div class="col-2">
                                 <p><b>Memory:</b><br /> {{ vmguest.mem_gb }}</p>
-                                <p><b>Fraction of Mem Used:</b><br /> {{ vmguest.fraction_mem_usage }}</p>
+                                <p><b>Fraction of Mem Used:</b><br /> {{ vmguest.guest_memory_usage }}</p>
                             </div>
                             <div class="col-2">
                                 <p><b>OS:</b><br /> {{ vmguest.ostype }}</p>
