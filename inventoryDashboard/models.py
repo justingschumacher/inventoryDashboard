@@ -70,10 +70,10 @@ class VwDjangoReportCore(models.Model):
     director = models.CharField(max_length=50, blank=True, null=True)
     decommissioned = models.CharField(max_length=10, blank=True, null=True)
     mem_gb = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
-    guest_memory_usage = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    fraction_memory_usage = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     disk_gb = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     cpu = models.IntegerField(blank=True, null=True)
-    overall_cpu_usage = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    fraction_cpu_usage = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     ostype = models.CharField(max_length=128, blank=True, null=True)
     state = models.CharField(max_length=50, blank=True, null=True)
     annotation = models.CharField(max_length=1024, blank=True, null=True)
@@ -85,7 +85,7 @@ class VwDjangoReportCore(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'vw_django_report_core'
+        db_table = 'vw_memory_cpu_usage_report'
 
 class DjangoReportCoreDim(models.Model):
     id = models.IntegerField(primary_key=True)

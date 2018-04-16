@@ -231,13 +231,13 @@ class HighCPUCountClassView(View):
 
     def getsbs(request):
         cpu_utilization_boxplot = VwDjangoReportCore.objects.values('cpu'
-                                                                   ).annotate(count=Count('overall_cpu_usage')
+                                                                   ).annotate(count=Count('fraction_cpu_usage')
                                                                               ).aggregate(avg=Avg('count'))
         # df = pd.DataFrame.from_dict(cpu_utilization_boxplot)
         # df = read_frame(cpu_utilization_boxplot)
 
 
-        graph = sb.boxplot(data=df, y='cpu', x='overall_cpu_usage', palette='gray')
+        graph = sb.boxplot(data=df, y='cpu', x='fraction_cpu_usage', palette='gray')
         graph.set_ylabel('vCPU count')
         graph.set_xlabel('Hertz Used')
         graph.set_xticklabels(graph.get_xticklabels(), rotation=90)
@@ -252,7 +252,7 @@ class HighCPUCountClassView(View):
         high_cpu_count = VwDjangoReportCore.objects.filter(Q(cpu__gt=4)).count()
         high_cpu_guests = VwDjangoReportCore.objects.filter(Q(cpu__gt=4))
         cpu_utilization_boxplot = VwDjangoReportCore.objects.values('cpu'
-                                                                     ).annotate(count=Count('overall_cpu_usage')
+                                                                     ).annotate(count=Count('fraction_cpu_usage')
                                                                                 ).aggregate(avg=Avg('count'))
 
         return render(request,
