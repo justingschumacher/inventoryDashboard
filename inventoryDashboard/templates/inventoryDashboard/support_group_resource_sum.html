@@ -8,6 +8,7 @@
 <form action="" method="get">
     {% csrf_token %}
 </form>
+
 <h6 class="text-center"> Support Group Resource Cumulative Use </h6>
 
 <div class="container-fluid">
@@ -18,15 +19,17 @@
             <th scope="col">Support Group</th>
             <th scope="col">CPU Use</th>
             <th scope="col">Mem GB Use</th>
+            <th scope="col">Disk GB Use</th>
         </tr>
     </thead>
     <tbody>
-        {% for support_group in object_list %}
+        {% for metric in support_group_counts %}
             <tr>
 {#                <th scope="row">{{ sg.id }}</th>#}
-                <td>{{ support_group.support_group }}</td>
-                <td>{{ support_group.total_cpu_used }}</td>
-                <td>{{ support_group.total_mem_gb_used }}</td>
+                <td>{{ metric.support_group }}</td>
+                <td>{{ metric.cpu_counts }}</td>
+                <td>{{ metric.mem_gb_counts }}</td>
+                <td>{{ metric.disk_gb_counts }}</td>
             </tr>
         {% endfor %}
     </tbody>

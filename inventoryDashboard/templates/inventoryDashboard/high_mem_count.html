@@ -36,6 +36,7 @@
                             <div class="col-2">
                                 <p><b>vCPUs:</b><br /> {{ vmguest.cpu }}</p>
                                 <p><b>Fraction of CPU Used:</b><br /> {{ vmguest.fraction_cpu_usage }}</p>
+                                <p><b>Disk GB Used:</b><br /> {{ vmguest.disk_gb }}</p>
                             </div>
                             <div class="col-2">
                                 <p><b>Memory:</b><br /> {{ vmguest.mem_gb }}</p>
@@ -52,6 +53,6 @@
         </div>
     {% endfor %}
 </div>
-
+{{ gbd_count }}
 </form>
 {% endblock %}

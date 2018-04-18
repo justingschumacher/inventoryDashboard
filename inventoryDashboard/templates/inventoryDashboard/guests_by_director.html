@@ -26,9 +26,14 @@
     <tbody>
         {% for director in guests_by_director_count %}
             <tr>
-{#                <th scope="row">{{ sg.id }}</th>#}
+            {% if not director %}
+{#              <th scope="row">{{ sg.id }}</th>#}
+                <td>No Director in ServiceNow</td>
+                <td>{{ director.VMs }}</td>
+            {% else %}
                 <td>{{ director.director }}</td>
                 <td>{{ director.VMs }}</td>
+            {% endif %}
             </tr>
         {% endfor %}
     </tbody>

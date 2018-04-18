@@ -1,4 +1,4 @@
-from django.db.models import Q, Count, Avg
+from django.db.models import Q, Count, Avg, Sum
 from django_pandas.io import read_frame
 import numpy as np
 import pandas as pd
@@ -102,16 +102,63 @@ class IndexClassView(View):
 
 
 
-class DirectorResourceSum(ListView):
+class DirectorResourceSum(View):
     model = DjangoReportsDirectors
     template_name = 'inventoryDashboard/director_resource_sum.html'
     success_url = reverse_lazy('index')
 
 
-class SupportGroupResourceSum(ListView):
+    def get(self, request):
+        vmguests = VwDjangoReportCore.objects.all()
+        director_counts = VwDjangoReportCore.objects.values('director'
+                                                      ).annotate( cpu_counts=Sum('cpu', distinct=True),
+                                                                  mem_gb_counts=Sum('mem_gb', distinct=True),
+                                                                  disk_gb_counts=Sum('disk_gb', distinct=True)
+                                                                  ).order_by('-cpu_counts')
+
+        def get_context_data(self, **kwargs):
+            context = super(IndexClassView, self).get_context_data(**kwargs)
+            context['DjangoReportCore'] = VwDjangoReportCore.objects.all()
+            context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
+            # And so on for more models
+            return context
+
+        return render(request,
+                      self.template_name,
+                      {'Vmguests': vmguests,
+                      'director_counts': director_counts,
+                       })
+
+
+
+
+class SupportGroupResourceSum(View):
     model = DjangoReportsSupportGroupResources
     template_name = 'inventoryDashboard/support_group_resource_sum.html'
     success_url = reverse_lazy('index')
+
+    def get(self, request):
+        vmguests = VwDjangoReportCore.objects.all()
+        support_group_counts = VwDjangoReportCore.objects.values('support_group'
+                                                      ).annotate( cpu_counts=Sum('cpu', distinct=True),
+                                                                  mem_gb_counts=Sum('mem_gb', distinct=True),
+                                                                  disk_gb_counts=Sum('disk_gb', distinct=True)
+                                                                  ).order_by('-cpu_counts')
+
+        def get_context_data(self, **kwargs):
+            context = super(IndexClassView, self).get_context_data(**kwargs)
+            context['DjangoReportCore'] = VwDjangoReportCore.objects.all()
+            context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
+            # And so on for more models
+            return context
+
+        return render(request,
+                      self.template_name,
+                      {'Vmguests': vmguests,
+                      'support_group_counts': support_group_counts,
+                       })
+
+
 
 
 class DetailClassView(DetailView):
@@ -155,6 +202,8 @@ class GuestsbyDirectorClassView(View):
         guests_by_director_count = VwDjangoReportCore.objects.values('director'
                                                                    ).annotate(VMs=Count('director')
                                                                               ).order_by('VMs').reverse()
+
+
         return render(request,
                       self.template_name,
                       {'guests_by_director_count': guests_by_director_count,

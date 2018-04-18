@@ -19,15 +19,17 @@
             <th scope="col">Director</th>
             <th scope="col">CPU Use</th>
             <th scope="col">Mem GB Use</th>
+            <th scope="col">Disk GB Use</th>
         </tr>
     </thead>
     <tbody>
-        {% for director in object_list %}
+        {% for director in director_counts %}
             <tr>
 {#                <th scope="row">{{ director.id }}</th>#}
                 <td>{{ director.director }}</td>
-                <td>{{ director.total_cpu_used }}</td>
-                <td>{{ director.total_mem_gb_used }}</td>
+                <td>{{ director.cpu_counts }}</td>
+                <td>{{ director.mem_gb_counts }}</td>
+                <td>{{ director.disk_gb_counts }}</td>
             </tr>
         {% endfor %}
     </tbody>
