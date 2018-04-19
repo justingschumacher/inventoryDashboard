@@ -2,6 +2,6 @@ dev:
   script:
   # - export DATABASE_URL=postgres://postgres:@postgres:5432/python-test-app
   - apt-get update -qy
-  - apt-get install -y python3.6 python-pip3.6
+  - apt-get install -y python3 python-pip3
   - pip install -r requirements.txt
   - python manage.py test
