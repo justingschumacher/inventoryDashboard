@@ -1,0 +1,10 @@
+gunicorn
+matplotlib
+numpy
+scipy
+pandas
+psycopg2
+Django
+django-pandas
+django-widget-tweaks
+seaborn
