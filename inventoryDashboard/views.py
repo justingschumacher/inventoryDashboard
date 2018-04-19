@@ -82,7 +82,7 @@ class IndexClassView(View):
         searchterm = ''
         if request.POST and request.POST.get('search'):
             searchterm = request.POST.get('search').lower()
-            vmguests = vmguests.filter(Q(vm_name__icontains=searchterm) |
+            vmguests = vmguests.filter(Q(vmname__icontains=searchterm) |
                                        Q(vmhostname__icontains=searchterm) |
                                        Q(clustername__icontains=searchterm) |
                                        Q(dcname__icontains=searchterm) |

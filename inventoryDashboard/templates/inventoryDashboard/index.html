@@ -7,12 +7,12 @@
 
 <form method="POST" class="post-form form-inline">
     {% csrf_token %}
-{#    <div class="form-group">#}
-{#        <div class="input-group">#}
-{#            <input type="text" placeholder="Search" name="search" value="{{ searchterm }}">#}
-{#            <button type="submit" class="save btn btn-default input-group-addon">Search</button>#}
-{#        </div>#}
-{#    </div>#}
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" placeholder="Search" name="search" value="{{ searchterm }}">
+            <button type="submit" class="save btn btn-default input-group-addon">Search</button>
+        </div>
+    </div>
 </form>
 <div>
 <p><em>This site is beta, information should not be used for production or decision making!</em></p>
