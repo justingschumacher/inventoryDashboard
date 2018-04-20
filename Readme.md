@@ -1,5 +1,5 @@
 20 Apr 2018
-#Machine Setup
+# Machine Setup
 Django has the concept of a project and an application (app). Generally speaking, you have many apps in a project.
 A project has machine specific configuration, while the app is where the actual code is.
 
@@ -18,7 +18,7 @@ https://getbootstrap.com/docs/4.0/getting-started/introduction/
 And of course, Django docs:
 https://docs.djangoproject.com/en/2.0/
 
-##Machine Setup
+## Machine Setup
 * Install: python3, pip3, virtualenv.
 * Create a directory for the project and change to that directory
 * Create a virtualenv: virtualenv {projectname}_env
