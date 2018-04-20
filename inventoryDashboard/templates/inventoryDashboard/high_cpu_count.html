@@ -15,7 +15,7 @@
 </div>
 
 <br />
-{#<img src="{% url 'high_cpu_countSBS' %}" />#}
+<img src="{% url 'high_cpu_countSBS' %}" />
 <br />
 <p class="text-center font-weight-bold">Click a block below for the details of that item!</p>
 <div class="container-fluid">
@@ -26,7 +26,7 @@
                     <a href="{% url 'item_detail' vmguest.id %}">
                         <div id=clickable-row class="row row-hover alert alert-secondary">
                             <div class="col-2">
-                                <p><b>VM Name:</b><br />{{ vmguest.vm_name}}</p>
+                                <p><b>VM Name:</b><br />{{ vmguest.vmname}}</p>
                                 <p><b>Status:</b><br /> {{ vmguest.state }}</p>
                                 <p><b>Datacenter:</b><br /> {{ vmguest.dcname }}</p>
                             </div>

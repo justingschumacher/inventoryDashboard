@@ -1,20 +1,15 @@
 from django.db.models import Q, Count, Avg, Sum
 from django_pandas.io import read_frame
-import numpy as np
-import pandas as pd
-from scipy import stats, integrate
-import matplotlib as pl
-pl.use('Agg')
-import matplotlib.pyplot as plt
-from matplotlib import rcParams
-rcParams.update({'figure.autolayout': True})
 import seaborn as sb
-from django.utils import timezone
-from django.views.generic import View, DetailView, ListView, TemplateView
+from django.views.generic import View, DetailView
 from django.urls import reverse_lazy
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import VwDjangoReportCore, DjangoReportsDirectors, DjangoReportsSupportGroupResources
+from .models import VwDjangoReportCore
+import matplotlib as pl
+pl.use('Agg')
+from matplotlib import rcParams
+rcParams.update({'figure.autolayout': True})
 
 # Create your views here.
 
@@ -39,16 +34,16 @@ class IndexClassView(View):
         high_memory_guests = VwDjangoReportCore.objects.filter(Q(mem_gb__gte=8))
         guests_by_director_count = VwDjangoReportCore.objects.values('director').annotate(VMs=Count('director'))
         guests_by_support_group_count = VwDjangoReportCore.objects.values('support_group'
-                                                                        ).annotate(VMs=Count('support_group'))
+                                                                          ).annotate(VMs=Count('support_group'))
         vm_count_by_os = VwDjangoReportCore.objects.values('ostype').annotate(VMs=Count('ostype'))
         support_group_count = VwDjangoReportCore.objects.values('support_group'
-                                                              ).annotate(support_group_count=Count('support_group')
+                                                                ).annotate(support_group_count=Count('support_group')
                                                                          ).count()
         director_count = VwDjangoReportCore.objects.values('director'
-                                                         ).annotate(director_count=Count('director')).count()
+                                                           ).annotate(director_count=Count('director')).count()
         vm_count_all = VwDjangoReportCore.objects.values('vmname'
-                                                       ).annotate(vm_count_all=Count('vmname')).count()
-        director_report = DjangoReportsDirectors.objects.all()
+                                                         ).annotate(vm_count_all=Count('vmname')).count()
+        director_report = VwDjangoReportCore.objects.all()
 
         qs = VwDjangoReportCore.objects.all()
         df = read_frame(qs, ['director', 'vmname'])
@@ -56,7 +51,7 @@ class IndexClassView(View):
         def get_context_data(self, **kwargs):
             context = super(IndexClassView, self).get_context_data(**kwargs)
             context['DjangoReportCore'] = VwDjangoReportCore.objects.all()
-            context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
+            # context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
             # And so on for more models
             return context
 
@@ -101,64 +96,58 @@ class IndexClassView(View):
                        })
 
 
-
 class DirectorResourceSum(View):
-    model = DjangoReportsDirectors
+    model = VwDjangoReportCore
     template_name = 'inventoryDashboard/director_resource_sum.html'
     success_url = reverse_lazy('index')
-
 
     def get(self, request):
         vmguests = VwDjangoReportCore.objects.all()
         director_counts = VwDjangoReportCore.objects.values('director'
-                                                      ).annotate( cpu_counts=Sum('cpu', distinct=True),
-                                                                  mem_gb_counts=Sum('mem_gb', distinct=True),
-                                                                  disk_gb_counts=Sum('disk_gb', distinct=True)
-                                                                  ).order_by('-cpu_counts')
+                                                            ).annotate(cpu_counts=Sum('cpu', distinct=True),
+                                                                       mem_gb_counts=Sum('mem_gb', distinct=True),
+                                                                       disk_gb_counts=Sum('disk_gb', distinct=True)
+                                                                       ).order_by('-cpu_counts')
 
         def get_context_data(self, **kwargs):
             context = super(IndexClassView, self).get_context_data(**kwargs)
             context['DjangoReportCore'] = VwDjangoReportCore.objects.all()
-            context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
+            # context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
             # And so on for more models
             return context
 
         return render(request,
                       self.template_name,
                       {'Vmguests': vmguests,
-                      'director_counts': director_counts,
+                       'director_counts': director_counts,
                        })
 
 
-
-
 class SupportGroupResourceSum(View):
-    model = DjangoReportsSupportGroupResources
+    model = VwDjangoReportCore
     template_name = 'inventoryDashboard/support_group_resource_sum.html'
     success_url = reverse_lazy('index')
 
     def get(self, request):
         vmguests = VwDjangoReportCore.objects.all()
         support_group_counts = VwDjangoReportCore.objects.values('support_group'
-                                                      ).annotate( cpu_counts=Sum('cpu', distinct=True),
-                                                                  mem_gb_counts=Sum('mem_gb', distinct=True),
-                                                                  disk_gb_counts=Sum('disk_gb', distinct=True)
-                                                                  ).order_by('-cpu_counts')
+                                                                 ).annotate(cpu_counts=Sum('cpu', distinct=True),
+                                                                            mem_gb_counts=Sum('mem_gb', distinct=True),
+                                                                            disk_gb_counts=Sum('disk_gb', distinct=True)
+                                                                            ).order_by('-cpu_counts')
 
         def get_context_data(self, **kwargs):
             context = super(IndexClassView, self).get_context_data(**kwargs)
             context['DjangoReportCore'] = VwDjangoReportCore.objects.all()
-            context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
+            # context['DjangoReportsDirectors'] = DjangoReportsDirectors.objects.all()
             # And so on for more models
             return context
 
         return render(request,
                       self.template_name,
                       {'Vmguests': vmguests,
-                      'support_group_counts': support_group_counts,
+                       'support_group_counts': support_group_counts,
                        })
-
-
 
 
 class DetailClassView(DetailView):
@@ -183,8 +172,10 @@ class GuestsbyDirectorClassView(View):
 
     def getsbs(request):
         guests_by_director_count = VwDjangoReportCore.objects.values('director'
-                                                                   ).annotate(VMs=Count('director')
-                                                                              ).order_by('VMs').reverse().order_by('VMs')[:20]
+                                                                     ).annotate(VMs=Count('director')
+                                                                                ).order_by('VMs'
+                                                                                           ).reverse().order_by('VMs'
+                                                                                                                )[:20]
         queryset = guests_by_director_count
         df = read_frame(queryset)
 
@@ -200,8 +191,8 @@ class GuestsbyDirectorClassView(View):
 
     def get(self, request):
         guests_by_director_count = VwDjangoReportCore.objects.values('director'
-                                                                   ).annotate(VMs=Count('director')
-                                                                              ).order_by('VMs').reverse()
+                                                                     ).annotate(VMs=Count('director')
+                                                                                ).order_by('VMs').reverse()
 
 
         return render(request,
@@ -216,10 +207,11 @@ class GuestsbySupportGroupClassView(View):
     success_url = reverse_lazy('index')
 
     def getsbs(request):
-        guests_by_support_group_count = VwDjangoReportCore.objects.values('support_group'
-                                                                        ).annotate(VMs=Count('support_group')
-                                                                                   ).order_by('VMs').reverse().order_by('VMs')[:20]
-        queryset = guests_by_support_group_count
+        guests_by_group_count = VwDjangoReportCore.objects.values('support_group'
+                                                                  ).annotate(VMs=Count('support_group')
+                                                                             ).order_by('VMs'
+                                                                                        ).reverse().order_by('VMs')[:20]
+        queryset = guests_by_group_count
         df = read_frame(queryset)
 
         graph = sb.barplot(data=df, y='VMs', x='support_group', palette='gray')
@@ -234,14 +226,12 @@ class GuestsbySupportGroupClassView(View):
 
     def get(self, request):
         guests_by_support_group_count = VwDjangoReportCore.objects.values('support_group'
-                                                                        ).annotate(VMs=Count('support_group')
-                                                                              ).order_by('VMs').reverse()
-        df = read_frame(guests_by_support_group_count)
+                                                                          ).annotate(VMs=Count('support_group')
+                                                                                     ).order_by('VMs').reverse()
 
         return render(request,
                       self.template_name,
                       {'guests_by_support_group_count': guests_by_support_group_count,
-                       'df': df,
                        })
 
 
@@ -254,14 +244,14 @@ class OSDistributionClassView(View):
     def get(self, request):
         vmguests = VwDjangoReportCore.objects.all()
         guests_by_director_count = VwDjangoReportCore.objects.values('director'
-                                                                   ).annotate(VMs=Count('director')
-                                                                              ).order_by('VMs').reverse()
+                                                                     ).annotate(VMs=Count('director')
+                                                                                ).order_by('VMs').reverse()
         guests_by_support_group_count = VwDjangoReportCore.objects.values('support_group'
-                                                                        ).annotate(VMs=Count('support_group')
-                                                                                   ).order_by('VMs').reverse()
+                                                                          ).annotate(VMs=Count('support_group')
+                                                                                     ).order_by('VMs').reverse()
         vm_count_by_os = VwDjangoReportCore.objects.values('ostype'
-                                                         ).annotate(VMs=Count('ostype')
-                                                                    ).order_by('VMs').reverse()
+                                                           ).annotate(VMs=Count('ostype')
+                                                                      ).order_by('VMs').reverse()
 
         return render(request,
                       self.template_name,
@@ -280,11 +270,9 @@ class HighCPUCountClassView(View):
 
     def getsbs(request):
         cpu_utilization_boxplot = VwDjangoReportCore.objects.values('cpu'
-                                                                   ).annotate(count=Count('fraction_cpu_usage')
-                                                                              ).aggregate(avg=Avg('count'))
-        # df = pd.DataFrame.from_dict(cpu_utilization_boxplot)
-        # df = read_frame(cpu_utilization_boxplot)
-
+                                                                    ).annotate(count=Count('fraction_cpu_usage')
+                                                                               ).aggregate(avg=Avg('count'))
+        df = read_frame(cpu_utilization_boxplot)
 
         graph = sb.boxplot(data=df, y='cpu', x='fraction_cpu_usage', palette='gray')
         graph.set_ylabel('vCPU count')
@@ -301,8 +289,8 @@ class HighCPUCountClassView(View):
         high_cpu_count = VwDjangoReportCore.objects.filter(Q(cpu__gt=4)).count()
         high_cpu_guests = VwDjangoReportCore.objects.filter(Q(cpu__gt=4))
         cpu_utilization_boxplot = VwDjangoReportCore.objects.values('cpu'
-                                                                     ).annotate(count=Count('fraction_cpu_usage')
-                                                                                ).aggregate(avg=Avg('count'))
+                                                                    ).annotate(count=Count('fraction_cpu_usage')
+                                                                            ).aggregate(avg=Avg('count'))
 
         return render(request,
                       self.template_name,
